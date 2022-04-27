@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide</title>
+    <style>
+        @font-face {
+            font-family: 'OpenSans-Light'; /* Гарнитура шрифта */
+            src: url(fonts/OpenSans-Light.ttf); /* Путь к файлу со шрифтом */
+        }
+        @font-face {
+            font-family: 'OpenSans-Bold';
+            src: local(OpenSans-Bold), url(fonts/OpenSans-Bold.ttf);
+        }
+        @font-face {
+            font-family: Raleway;
+            src: url(fonts/Raleway-Light.ttf);
+        }
+        @font-face {
+            font-family: Montserrat;
+            src: url(fonts/Montserrat-Light.otf);
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            width: 30%;
+            padding: 10px 10px 10px 10px;
+            background-color: #383737;
+            max-height: 97vh;
+            position:relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .text {
+            display: flex;
+            flex-direction: column;
+        }
+        .title {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0 15px 0;
+        }
+        .triangle {
+            width: 0;
+            height: 0;
+            border-right: 40px solid #C4C4C4;
+            border-bottom: 23px solid transparent;
+            border-top: 23px solid transparent;
+        }
+        body {
+            margin: 0 0 0 0;
+            background-color: #141313;
+            color: white;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+        }
+        h3 {
+            font-family: "OpenSans-Bold", "Arial";
+            font-size: 35px;
+            width: 100%;
+            text-align: center;
+            margin: 1px auto 0 auto;
+        }
+        .title a{
+            margin: 0 20px 0 15px;
+        }
+        .chapter {
+            background-color: transparent;
+            border: none;
+            font-family: "OpenSans-Bold", "Arial";
+            font-size: 20px;
+            color: white;
+            text-align: left;
+            margin: 5px auto 5px auto;
+        }
+        .paragraph {
+            padding: 10px 10px 10px 10px;
+            text-decoration: none;
+            font-family: "OpenSans-Bold", "Arial";
+            font-size: 15px;
+            color: white;
+        }
+        .block {
+            max-width: 90%;
+            width: fit-content;
+            min-height: 40px;
+            height: fit-content;
+            background-color: #AEAEAE;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            margin: 5px auto 15px 15px;
+        }
+    </style>
+    
+</head>
+<body class="container">
+    <div class="menu">
+        <div class="title">
+            <a href="The_SAM.html"><div class="triangle"></div></a>
+            <h3>Справочник</h3>
+        </div>
+        <div class="list">
+            <button class="chapter">Глава 1. Поездка в Париж</button>
+            <div class="in_chapter">
+                <div class="block">
+                    <a class="paragraph" href="#">§ 1. Как я покупал билеты и сел в автобус</a>
+                </div>
+                <div class="block">
+                    <a class="paragraph" href="#">§ 2. Как офигенно я полетал</a>
+                </div>
+                <div class="block">
+                    <a class="paragraph" href="#">§ 3. Конец истории. Моё прибытие в Париж</a>
+                </div>
+            </div>
+            <button class="chapter">Глава 2. Насколько красиво в Париже</button>
+            <div class="in_chapter">
+                <div class="block">
+                    <a class="paragraph" href="#">§ 1. Как я покупал билеты и сел в автобус</a>
+                </div>
+                <div class="block">
+                    <a class="paragraph" href="#">§ 2. Как офигенно я полетал</a>
+                </div>
+                <div class="block">
+                    <a class="paragraph" href="#">§ 3. Конец истории. Моё прибытие в Париж</a>
+                </div>
+            </div>
+            <button class="chapter">Глава 3. Поездка в Россию</button>
+            <div class="in_chapter">
+                <div class="block">
+                    <a class="paragraph" href="#">§ 1. Как я покупал билеты и сел в автобус</a>
+                </div>
+                <div class="block">
+                    <a class="paragraph" href="#">§ 2. Как офигенно я полетал</a>
+                </div>
+                <div class="block">
+                    <a class="paragraph" href="#">§ 3. Конец истории. Моё прибытие в Париж</a>
+                </div>
+            </div>
+            <button class="chapter">Глава 4. Моя смерть. Сражение с медведем</button>
+        </div>
+    </div>
+    <div class="text">
+        <p>Оформим текст, когда появится справочник</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let btn_hand;
+        let btn_bloody_system;
+        let btn_nervous_system;
+        let btn_muscle_system;
+        let btn_bone_system;
+        let btn_settings_systems;
+        let btn_settings_random;
+
+        function byId(e){return document.getElementById(e);}
+        function recolourClickedButton(element)
+        {
+            if (element.getAttribute('option') == 'one')
+            {
+                if (element.getAttribute('id') == 'button-settings-systems') 
+                {
+                    if (btn_settings_random.getAttribute('clicked') == 'false')
+                    {
+                        if (element.getAttribute('clicked') == 'false')
+                        {
+                            element.style.backgroundColor = "#4f4f4f";
+                            element.setAttribute('clicked', 'true');
+                        }
+                        else {
+                            element.style.backgroundColor = "transparent";
+                            element.setAttribute('clicked', 'false');
+                        }
+                    }
+                    else {
+                        element.style.backgroundColor = "#4f4f4f";
+                        element.setAttribute('clicked', 'true')
+                        btn_settings_random.style.backgroundColor = "transparent";
+                        btn_settings_random.setAttribute('clicked', 'false');
+                    }
+                }
+                else {
+                    if (btn_settings_systems.getAttribute('clicked') == 'false')
+                    {
+                        if (element.getAttribute('clicked') == 'false')
+                        {
+                            element.style.backgroundColor = "#4f4f4f";
+                            element.setAttribute('clicked', 'true');
+                        }
+                        else {
+                            element.style.backgroundColor = "transparent";
+                            element.setAttribute('clicked', 'false');
+                        }
+                    }
+                    else {
+                        element.style.backgroundColor = "#4f4f4f";
+                        element.setAttribute('clicked', 'true')
+                        btn_settings_systems.style.backgroundColor = "transparent";
+                        btn_settings_systems.setAttribute('clicked', 'false');
+                    }
+                }
+            }
+            else {
+                if (element.getAttribute('clicked') == 'false')
+                {
+                    element.style.backgroundColor = "#4f4f4f";
+                    element.setAttribute('clicked', 'true')
+                }
+                else {
+                    element.style.backgroundColor = "transparent";
+                    element.setAttribute('clicked', 'false')
+                }
+            }
+            
+        }
+        function isUserPickedAllSettings()
+        {
+            if ((btn_hand.getAttribute('clicked') == 'true') & ((btn_bloody_system.getAttribute('clicked') == 'true') || (btn_nervous_system.getAttribute('clicked') == 'true') || (btn_muscle_system.getAttribute('clicked') == 'true') || (btn_bone_system.getAttribute('clicked') == 'true')) & ((btn_settings_random.getAttribute('clicked') == 'true') || btn_settings_systems.getAttribute('clicked') == 'true'))
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        function closeSettings(element)
+        {
+            if (isUserPickedAllSettings())
+            {
+                byId('window-settings').style.display = 'none';
+            }
+            else {
+                alert('Вы выбрали не все опции!');
+            }
+        }
+        function myInit()
+        {
+            btn_hand = byId('button-hand');
+            btn_bloody_system = byId('button-bloody-system');
+            btn_nervous_system = byId('button-nervous-system');
+            btn_muscle_system = byId('button-muscle-system');
+            btn_bone_system = byId('button-bone-system');
+            btn_settings_systems = byId('button-settings-systems');
+            btn_settings_random = byId('button-settings-random');
+        }
+    </script>
+    <style>
+        body {
+            background-color: #141313;
+            color: white;
+            
+        }
+        @font-face {
+            font-family: 'OpenSans-Light'; /* Гарнитура шрифта */
+            src: url(fonts/OpenSans-Light.ttf); /* Путь к файлу со шрифтом */
+        }
+        @font-face {
+            font-family: 'OpenSans-Bold';
+            src: local(OpenSans-Bold), url(fonts/OpenSans-Bold.ttf);
+        }
+        @font-face {
+            font-family: Raleway;
+            src: url(fonts/Raleway-Light.ttf);
+        }
+        @font-face {
+            font-family: Montserrat;
+            src: url(fonts/Montserrat-Light.otf);
+        }
+        @font-face {
+            font-family: Montserrat-Bold;
+            src: url(fonts/Montserrat-Bold.otf);
+        }
+        @font-face {
+            font-family: Lato;
+            src: url(fonts/Lato-Regular.ttf);
+        }
+        p {
+            font-family: Lato, Arial, 'Times New Roman';
+        }
+        .container-of-window {
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .window-of-settings {
+            z-index: 10;
+            background-color: #383737;
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px;
+            width: max-content;
+            padding: 15px 20px 15px 20px;
+        }
+        .header-of-settings {
+            font-family: Montserrat, Lato;
+            font-size: 35px;
+            font-weight: 1000;
+            display: flex;
+            justify-content: center;
+        }
+        .container-of-choosing {
+            margin: 30px 0 5px 0;
+
+        }
+        .container-of-systems {
+            display: flex;
+            justify-content: space-between;
+        }
+        .title-of-choosing {
+            font-family: Montserrat-Bold, Lato;
+            font-size: 25px;
+            font-weight: 1000;
+        }
+        .result-of-playing {
+            display: flex;
+            justify-content: space-between;
+        }
+        .result-of-playing p {
+            font-family: Lato, Montserrat;
+            font-size: 27px;
+            margin: 15px 0 15px 0;
+        }
+        .layer-of-button-num-1 {
+            display: flex;
+            justify-content: space-between;
+        }
+        .layer-of-button-num-1 button {
+            width: 250px;
+        }
+        .layer-of-button-num-2 {
+            display: flex;
+            justify-content: center;
+        }
+        .window-of-settings button {
+            background-color: transparent;
+            border: none;
+            border-radius: 4px;
+            font-family: "Lato", "Arial";
+            font-size: 27px;
+            color: white;
+            text-align: center;
+            margin: 5px 15px 5px 15px;
+            padding: 0 10px 5px 10px;
+        }
+        .underline-on-hover:hover {
+            text-decoration: underline;
+        }
+        .container-for-ok {
+            display: flex;
+            justify-content: flex-end;
+        }
+        button.ok {
+            background-color: #4f4f4f;
+            width: 100px; 
+        }
+    </style>
+</head>
+<body onload="myInit();">
+    <div class='container-of-window' id="window-settings">
+        <div class='window-of-settings'>
+            <div class="header-of-settings">Настройки теста</div>
+            <div class="container-of-choosing">
+                <div class="title-of-choosing">Выберите часть тела:</div>
+                <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-hand">Рука</button>
+            </div>
+            <div class="container-of-choosing">
+                <div class="title-of-choosing">Выберите систему(-ы):</div>
+                <div class="container-of-systems">
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-bloody-system">Кровеносная</button>
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-nervous-system">Нервная</button>
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-bone-system">Костная</button>
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-muscle-system">Мышечная</button>
+                </div>
+            </div>
+            <div class="container-of-choosing">
+                <div class="title-of-choosing">В каком порядке задавать вопросы?</div>
+                <div class="container-of-systems">
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" option="one" id="button-settings-systems" group="1">По системам</button>
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" option="one" id="button-settings-random" group="1">В случайном порядке</button>
+                </div>
+            </div>
+            <div class="container-for-ok">
+                <button class="ok underline-on-hover" onclick="closeSettings(this);" >OK</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

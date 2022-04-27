@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест</title>
+    <script>
+
+        let active_button;
+
+        let img_circles;
+        let img_triangles;
+        let img_squares;
+        let img_stars;
+
+        let timer; //ссылка на таймер в нижнем левом углу
+        let tip_block; //значение подсказки
+        let whatDoWeAsk; //значение в нижнем поле
+        let accuracy; // значение в нижнем поле (процентое соотношение)
+        let accuracy_num = 0;
+        
+        let total_accuracy;
+        let timer_total;
+
+        let btn_home_header;
+        let btn_stop_game;
+
+        let btn_home_ended;
+        let btn_again;
+        let btn_another_settings;
+
+        let btn_hand;
+        let btn_bloody_system;
+        let btn_nervous_system;
+        let btn_muscle_system;
+        let btn_bone_system;
+        let btn_settings_systems;
+        let btn_settings_random;
+        //"материальные" объекты
+
+        let massive_in_game = [];
+        let massive_of_massives_in_game = [];
+        let bone_system = [];
+        let bloody_system = [];
+        let nervous_system = [];
+        let massive_of_maps;
+        let usedValues = []; //значения, которые уже использованы
+        let usedSystems = [];
+        let dictionary_of_objects = new Map();
+        //массивы
+
+        let percent_of_right_answers = 0; //процент правильных ответлв
+        let how_many_objects_clicked = 0; //сколько объектов нажато
+        let how_many_right_answers = 0; //сколько дано правильных ответов
+        
+        let is_animation_on = false;
+        let name_to_click; //на объект с каким названием нам нужно нажимать
+        let counterOfMoronism = 0; //счётчик дебилизма. считает, сколько раз человек нажал мимо. максимум - 3 раза
+
+
+        let timerId; //таймер
+        let gameMode; //режим игры
+        let gameSystems = []; //системы, которые выбрал пользователь
+        let index_of_choosed_system;
+
+        let millisec = 0; //0,01 секунды
+        let sec = 0; //секунда
+        let min = 0; //минута
+        var hdc; //хз что это, страшно удалять
+
+        function byId(e){return document.getElementById(e);}
+        //функция упрощает определение элемента
+
+        
+        function createCanvas(_img, _can) 
+        {
+            // get the target image
+            var img = byId(_img);
+            
+            var x,y,w,h;
+        
+            // get it's position and width+height
+            x = img.offsetLeft;
+            y = img.offsetTop;
+            w = img.clientWidth;
+            h = img.clientHeight;
+            // move the canvas, so it's contained by the same parent as the image
+            var imgParent = img.parentNode;
+            var can = byId(_can);
+            imgParent.appendChild(can);
+            // place the canvas in front of the image
+            can.style.zIndex = 5;
+
+            // position it over the image
+            can.style.left = x+'px';
+            can.style.top = y+'px';
+        
+            // make same size as the image
+            can.setAttribute('width', w+'px');
+            can.setAttribute('height', h+'px');
+            // get it's context
+            hdc = can.getContext('2d');
+        
+            // set the 'default' values for the colour/width of fill/stroke operations
+        }
+        function createDictionaryOfObjects()
+        {
+            massive_of_maps.forEach(function(item, i, massive_of_maps){
+                item = byId(item);
+                for (let x = 0; x < item.children.length; x++)
+                {
+                    let elem = item.children[x];
+                    elem.setAttribute("canvas-id", item.getAttribute("canvas-id"));
+                    elem.setAttribute("id", (item.getAttribute('id') + '-' + x));
+                    dictionary_of_objects.set(elem.getAttribute("id"), elem.getAttribute("alt"));
+                }
+            });
+            console.log(dictionary_of_objects);
+        }
+        //функция создаёт холсты
+
+        function drawPoly(coOrdStr, _canvas, color)
+        {
+            var mCoords = coOrdStr.split(',');
+            var c = document.getElementById(_canvas);
+            var hdc = c.getContext("2d");
+            hdc.beginPath();
+            
+            
+            hdc.fillStyle = color;
+            hdc.strokeStyle = "red";
+            hdc.moveTo(mCoords[0], mCoords[1]);
+            for (var i = 2; i < mCoords.length; i += 2) {
+                hdc.lineTo(mCoords[i], mCoords[i + 1]);
+            }
+            hdc.closePath();
+            hdc.fill();
+        }
+        function drawRect(coOrdStr)
+        {
+            var mCoords = coOrdStr.split(',');
+            var top, left, bot, right;
+            left = mCoords[0];
+            top = mCoords[1];
+            right = mCoords[2];
+            bot = mCoords[3];
+            hdc.strokeRect(left,top,right-left,bot-top); 
+        }
+        function drawCircle(coordon, _canvas, color = "yellow")
+        {
+            var coord = coordon.split(',');
+
+            var c = document.getElementById(_canvas);
+            var hdc = c.getContext("2d");
+            hdc.beginPath();
+
+            hdc.arc(coord[0], coord[1], coord[2], 0, 2 * Math.PI);
+            hdc.fillStyle = color;
+            hdc.strokeStyle = color;
+            hdc.fill();
+        }
+        function myHover(element, _canvas, color = "yellow")
+        {
+            if (element.getAttribute("clicked") == "false")
+            {
+                var hoveredElement = element;
+                var coordStr = element.getAttribute('coords');
+                var areaType = element.getAttribute('shape');
+                element.setAttribute("is_object_highlighted", 'true');
+                var s = byId(String(element.parentNode.getAttribute('id-of-neighbour')));
+                var w = element.parentNode;
+                switch (areaType)
+                {
+                    case 'polygon':
+                    case 'poly':
+                        drawPoly(coordStr, _canvas, color);
+                        break;
+            
+                    case 'rect':
+                        drawRect(coordStr, color);
+                        break;
+                    case 'circle':
+                        drawCircle(coordStr, _canvas, color);
+                        break;
+                }
+                if (s != null) 
+                {
+                    for(var i=1; i < (s.children.length) * 2; i = i + 2) {
+                        var elem = s.childNodes[i];
+                        if ((elem.getAttribute('alt') == element.getAttribute('alt')) & (elem.getAttribute('is_object_highlighted') == 'false'))
+                        {
+                            elem.setAttribute('is_object_highlighted', 'true');
+                            myHover(elem, elem.getAttribute('canvas-id'), color);
+                        }
+                    }
+                }
+                for(var i=1; i < (w.children.length) * 2; i = i + 2) {
+                        var elem = w.childNodes[i];
+                        if ((elem.getAttribute('alt') == element.getAttribute('alt')) & (elem.getAttribute('is_object_highlighted') == 'false'))
+                        {
+                            elem.setAttribute('is_object_highlighted', 'true');
+                            myHover(elem, elem.getAttribute('canvas-id'), color);
+                        }
+                    }
+            }
+        }
+        function myLeave(element, _canvas, color = "yellow")
+        {
+            if (element.getAttribute("clicked") == "false")
+            {
+                var canvas = byId(_canvas);
+                let _hdc = canvas.getContext('2d');
+                let coords = element.getAttribute("coords");
+                element.setAttribute('is_object_highlighted', 'false');
+                coords = coords.split(',');
+                switch (element.getAttribute("shape"))
+                {
+                    case "circle":
+                        _hdc.clearRect(coords[0]-coords[2]-1, coords[1]-coords[2]-1, 2 * coords[2] + 5, 2 * coords[2] + 5);
+                        break;
+                    case "poly":
+                        _hdc.globalCompositeOperation = 'destination-out';
+                        _hdc.fillStyle = color;
+                        _hdc.strokeStyle = "red";
+                        _hdc.lineWidth = 1;
+                        _hdc.beginPath();
+
+                        _hdc.moveTo(coords[0], coords[1]);
+                        for (var i = 2; i < coords.length; i += 2) {
+                            _hdc.lineTo(coords[i], coords[i + 1]);
+                        }
+                        _hdc.stroke();
+                        _hdc.closePath();
+                        _hdc.fill();
+                        _hdc.globalCompositeOperation = 'source-over';
+                        break;
+                }
+                var s = byId(String(element.parentNode.getAttribute('id-of-neighbour')));
+                var w = element.parentNode;
+                if (s != null) 
+                {
+                    for(var i=1; i < (s.children.length) * 2; i = i + 2) {
+                        var elem = s.childNodes[i];
+                        if ((elem.getAttribute('alt') == element.getAttribute('alt')) & (elem.getAttribute('is_object_highlighted') == 'true'))
+                        {
+                            elem.setAttribute('is_object_highlighted', 'false');
+                            myLeave(elem, elem.getAttribute('canvas-id'), color);
+                        }
+                    }
+                }
+                for(var i=1; i < (w.children.length) * 2; i = i + 2) {
+                    var elem = w.childNodes[i];
+                    if ((elem.getAttribute('alt') == element.getAttribute('alt')) & (elem.getAttribute('is_object_highlighted') == 'true'))
+                    {
+                        elem.setAttribute('is_object_highlighted', 'false');
+                        myLeave(elem, elem.getAttribute('canvas-id'), color);
+                    }
+                }
+            }
+        }
+        function clearAllCanvases()
+        {
+            clearCanvas('myCanvasCircle1');
+            clearCanvas('myCanvasCircle2');
+            clearCanvas('myCanvasSquares');
+            clearCanvas('myCanvasStars');
+            makeAllClickedAreasFalse();
+        }
+        function clearCanvas(_canvas)
+        {
+            let hdc_;
+            let __canvas = byId(_canvas);
+            hdc_ = __canvas.getContext('2d');
+            hdc_.clearRect(0, 0, __canvas.width, __canvas.height);
+        }
+        function makeAllClickedAreasFalse()
+        {
+            massive_of_maps.forEach(function(item, i, massive_of_maps){
+                item = byId(item);
+                for (let x = 0; x < item.children.length; x++)
+                {
+                    let elem = item.children[x];
+                    elem.setAttribute("clicked", 'false');
+                }
+            });
+        }
+        //функции для рисования выделения при наведении, убирании мышки
+        
+        
+        function clickedObject(el, event) 
+        {
+            let isUserRight = checkingAnswer(el);
+            how_many_objects_clicked += 1;
+            if (isUserRight)
+            {
+                counterOfMoronism = 0;
+                myHover(el, el.getAttribute('canvas-id'), '#3dfc0d');
+                el.setAttribute("clicked", "true");
+                var s = byId(String(el.parentNode.getAttribute('id-of-neighbour')));
+                var w = el.parentNode;
+                if (s != null) 
+                {
+                    for(var i=1; i < (s.children.length) * 2; i = i + 2) {
+                        var elem = s.childNodes[i];
+                        if ((elem.getAttribute('alt') == el.getAttribute('alt')))
+                        {
+                            myHover(elem, elem.getAttribute('canvas-id'), '#3dfc0d');
+                            elem.setAttribute("clicked", "true");
+                        }
+                    }
+                }
+                for(var i=1; i < (w.children.length) * 2; i = i + 2) {
+                    var elem = w.childNodes[i];
+                    if ((elem.getAttribute('alt') == el.getAttribute('alt')))
+                    {
+                        myHover(elem, elem.getAttribute('canvas-id'), '#3dfc0d');
+                        elem.setAttribute("clicked", "true");
+                    }
+                }
+                how_many_right_answers += 1
+                if (isGameEnded() == false) 
+                {
+                    updatePercentOfRightAnswers();
+                    clearTheRightAnswers();
+                    nextQuestion();
+                }
+                else
+                {
+                    updatePercentOfRightAnswers();
+                    showResult();
+                }
+            }
+            else
+            {
+                updatePercentOfRightAnswers();
+                showNameOfObject(el, event);
+                counterOfMoronism += 1;
+                if (counterOfMoronism >= 3)
+                {
+                    showTheRigntAnswers();
+                }
+            }
+        }
+        function updatePercentOfRightAnswers()
+        {
+            accuracy_num = how_many_right_answers / how_many_objects_clicked;
+            accuracy.innerHTML = Math.trunc((Math.floor(accuracy_num * 100) / 100) * 100);
+        }
+        function checkingAnswer(el)
+        {
+            if (name_to_click == el.getAttribute("alt"))
+            {
+                return true
+            }
+            else 
+            {
+                return false
+            }
+        }
+        function showNameOfObject(el, event)
+        {
+            if (is_animation_on == false)
+            {
+                tip_block.innerHTML = el.getAttribute("name");
+                x = event.clientX;
+                y = (event.clientY - 25);
+                tip_block.style.display = 'flex';
+                tip_block.style.left = x +'px';
+                tip_block.style.top = y +'px';
+                animateTip();
+            }
+        }
+        function animateTip()
+        {
+            console.log('До анимации is_animation_on =', is_animation_on)
+            is_animation_on = true;
+            tip_block.animate({opacity: [ 0, 1 ]}, 300);
+            tip_block.style.opacity = 1;
+            setTimeout(function(){ tip_block.animate({opacity: [ 1, 0 ]}, 1000);tip_block.style.opacity = 0;}, 2000);
+            setTimeout(function(){tip_block.style.display = 'none';is_animation_on = false;console.log('После анимации is_animation_on =', is_animation_on);}, 3000);            
+        }
+        function showTheRigntAnswers()
+        {
+            //находит элементы, которые надо выделить, и выделяет их
+            for (let [key, value] of dictionary_of_objects)
+            {
+                if (value == name_to_click)
+                {
+                    let area = byId(key);
+                    myHover(area, area.getAttribute("canvas-id"), "purple");
+                }
+            }
+        }
+        function clearTheRightAnswers()
+        {
+            //очищает все выделения-подсказки
+            for (let [key, value] of dictionary_of_objects)
+            {
+                if (value == name_to_click)
+                {
+                    let area = byId(key);
+                    myLeave(area, area.getAttribute("canvas-id"));
+                }
+            }
+        }
+        //функции для нажатия на объект
+
+        function isGameEnded() 
+        {
+            if (usedValues.length == massive_in_game.length)
+            {
+                console.log(usedValues, massive_in_game);
+                if (gameMode == 'randomly')
+                {
+                    return true;
+                }
+                else
+                {
+                    if (index_of_choosed_system == (gameSystems.length - 1))
+                    {
+                        return true
+                    }
+                    else
+                    {
+                        index_of_choosed_system++;
+                        usedValues.length = 0;
+                        massive_in_game.length = 0;
+                        addToGameMassive(gameSystems[index_of_choosed_system]);
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        function showResult() 
+        {
+            stopTimer();
+            byId("window-game-ended").style.display = "flex";
+            total_accuracy.innerHTML = (Math.trunc((Math.floor(accuracy_num * 100) / 100) * 100) + '%');
+            timer_total.innerHTML = timer.innerHTML;
+        }
+        //функции для окончания игры и вывода результатов
+        
+
+        function clickedButton(element, _active_button)
+        {
+            actived_button = _active_button;
+            _active_button = element;
+            actived_button.style.backgroundColor="transparent";
+            _active_button.style.backgroundColor="#383737";
+            return _active_button;
+        }
+        function changeDisplay(button) 
+        {
+            // actualDisplay = getComputedStyle(added_item_button).display;
+            switch (button.id)
+            {
+                case "button-circles":
+                    img_circles.style.display = "flex";
+                    img_triangles.style.display = "none";
+                    img_squares.style.display = "none";
+                    img_stars.style.display = "none";
+                    break;
+                case "button-triangles":
+                    img_triangles.style.display = "flex";
+                    img_circles.style.display = "none";
+                    img_squares.style.display = "none";
+                    img_stars.style.display = "none";
+                    break;
+                case "button-squares":
+                    img_squares.style.display = "flex";
+                    img_triangles.style.display = "none";
+                    img_circles.style.display = "none";
+                    img_stars.style.display = "none";
+                    break;
+                case "button-stars":
+                    img_stars.style.display = "flex";
+                    img_triangles.style.display = "none";
+                    img_squares.style.display = "none";
+                    img_circles.style.display = "none";
+                    break;
+            }
+        }
+        function pressingButton(element) 
+        {
+            active_button = clickedButton(element, active_button);
+            changeDisplay(active_button);
+
+            var x = element.getAttribute('iscreated');
+            if (x == 'false') 
+            {
+                createCanvas(element.getAttribute('img1'), element.getAttribute('canvas1'))
+                if (element.getAttribute('canvas2') != undefined) {
+                    createCanvas(element.getAttribute('img2'), element.getAttribute('canvas2'))
+                }
+                element.setAttribute('iscreated', 'true')
+            }
+
+        }
+        //функции для переключения между картинками и выделения кнопок переключения
+
+        function recolourClickedButton(element)
+        {
+            if (element.getAttribute('option') == 'one')
+            {
+                if (element.getAttribute('id') == 'button-settings-systems') 
+                {
+                    if (btn_settings_random.getAttribute('clicked') == 'false')
+                    {
+                        if (element.getAttribute('clicked') == 'false')
+                        {
+                            element.style.backgroundColor = "#4f4f4f";
+                            element.setAttribute('clicked', 'true');
+                        }
+                        else {
+                            element.style.backgroundColor = "transparent";
+                            element.setAttribute('clicked', 'false');
+                        }
+                    }
+                    else {
+                        element.style.backgroundColor = "#4f4f4f";
+                        element.setAttribute('clicked', 'true')
+                        btn_settings_random.style.backgroundColor = "transparent";
+                        btn_settings_random.setAttribute('clicked', 'false');
+                    }
+                }
+                else {
+                    if (btn_settings_systems.getAttribute('clicked') == 'false')
+                    {
+                        if (element.getAttribute('clicked') == 'false')
+                        {
+                            element.style.backgroundColor = "#4f4f4f";
+                            element.setAttribute('clicked', 'true');
+                        }
+                        else {
+                            element.style.backgroundColor = "transparent";
+                            element.setAttribute('clicked', 'false');
+                        }
+                    }
+                    else {
+                        element.style.backgroundColor = "#4f4f4f";
+                        element.setAttribute('clicked', 'true')
+                        btn_settings_systems.style.backgroundColor = "transparent";
+                        btn_settings_systems.setAttribute('clicked', 'false');
+                    }
+                }
+            }
+            else {
+                if (element.getAttribute('clicked') == 'false')
+                {
+                    element.style.backgroundColor = "#4f4f4f";
+                    element.setAttribute('clicked', 'true')
+                }
+                else {
+                    element.style.backgroundColor = "transparent";
+                    element.setAttribute('clicked', 'false')
+                }
+            }
+            
+        }
+        function isUserPickedAllSettings()
+        {
+            if ((btn_hand.getAttribute('clicked') == 'true') & ((btn_bloody_system.getAttribute('clicked') == 'true') || (btn_nervous_system.getAttribute('clicked') == 'true') || (btn_muscle_system.getAttribute('clicked') == 'true') || (btn_bone_system.getAttribute('clicked') == 'true')) & ((btn_settings_random.getAttribute('clicked') == 'true') || btn_settings_systems.getAttribute('clicked') == 'true'))
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        function closeSettings(element)
+        {
+            if (isUserPickedAllSettings())
+            {
+                byId('window-settings').style.display = 'none';
+                startTest();
+            }
+            else {
+                alert('Вы выбрали не все опции!');
+            }
+        }
+        function openSettings()
+        {
+            byId('window-settings').style.display = 'flex';
+        }
+        function showSettings()
+        {
+            byId('window-settings').style.display = 'flex';
+        }
+        //функции для настроек теста
+
+        function resetGame()
+        {
+            usedValues = [];
+            counterOfMoronism = 0;
+            name_to_click = '';
+            massive_in_game = [];
+            gameSystems = [];
+            millisec = 0;
+            sec = 0;
+            min = 0;
+            percent_of_right_answers = 0;
+            how_many_objects_clicked = 0;
+            how_many_right_answers = 0;
+            accuracy_num = 0;
+            accuracy.innerHTML = '0';
+            clearAllCanvases();
+            byId("window-game-ended").style.display = "none";
+        }
+        function startTest()
+        {
+            resetGame();
+            findGameMode();
+            createMassiveOfSystems();
+            addMassivesToGameMassive();
+            startTimer();
+            nextQuestion();
+        }
+        function findGameMode()
+        {
+            if (btn_settings_systems.getAttribute('clicked') == 'true')
+            {
+                gameMode = 'systems';
+            }
+            else {
+                gameMode = 'randomly';
+            }
+        }
+        function createMassiveOfSystems()
+        {
+            if (btn_bloody_system.getAttribute('clicked') == 'true')
+            {
+                gameSystems.push('bloody_system');
+            }
+            if (btn_nervous_system.getAttribute('clicked') == 'true')
+            {
+                gameSystems.push('nervous_system');
+            }
+            if (btn_muscle_system.getAttribute('clicked') == 'true')
+            {
+                gameSystems.push('muscle_system');
+            }
+            if (btn_bone_system.getAttribute('clicked') == 'true')
+            {
+                gameSystems.push('bone_system');
+            }
+        }
+        function addMassivesToGameMassive()
+        {
+            if (gameMode == 'randomly')
+            {
+                if (gameSystems.includes('bloody_system'))
+                {
+                    addToGameMassive('bloody_system');
+                }
+                if (gameSystems.includes('nervous_system'))
+                {
+                    addToGameMassive('nervous_system');
+                }
+                if (gameSystems.includes('muscle_system'))
+                {
+                    addToGameMassive('muscle_system');
+                }
+                if (gameSystems.includes('bone_system'))
+                {
+                    addToGameMassive('bone_system');
+                }
+                console.log('Выбранные системы:', massive_in_game, gameSystems);
+            }
+            else
+            {
+                index_of_choosed_system = 0;
+                gameSystems = gameSystems.sort(function(){
+                    return Math.random() - 0.5;
+                });
+                addToGameMassive(gameSystems[index_of_choosed_system]);
+            }
+        }
+        function addToGameMassive(name)
+        {
+            switch (name)
+            {
+                case 'bloody_system':
+                    massive_in_game = massive_in_game.concat(bloody_system);
+                    break;
+                case 'nervous_system':
+                    massive_in_game = massive_in_game.concat(nervous_system);
+                    break;
+                case 'muscle_system':
+                    massive_in_game = massive_in_game.concat(muscle_system);
+                    break;
+                case 'bone_system':
+                    massive_in_game = massive_in_game.concat(bone_system);
+                    break;
+            }
+        }
+        function nextQuestion()
+        {
+            let random_value = pickRandomValue(massive_in_game);
+            putRandomValue(random_value);
+        }
+        function pickRandomValue(massive_in_game) 
+        {
+            let try_again = true;
+            let unchecked_random_value = Math.floor(Math.random()*massive_in_game.length);
+            if (isRandomValueGood(unchecked_random_value) == false)
+            {
+                return unchecked_random_value;
+            }
+            else
+            {
+                return pickRandomValue(massive_in_game);
+            }
+        }
+        function isRandomValueGood(value)
+        {
+            let try_again = false;
+            try_again = checking(massive_in_game[value]);
+
+            function checking(element)
+            {
+                usedValues.forEach(function(element1, i, arr) {
+                    if (element == element1) {
+                        try_again = true;
+                        return true;
+                    }
+                });
+                if (try_again)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (try_again == false)
+            {
+                usedValues.push(massive_in_game[value]);
+            }
+            return try_again;
+        }
+        function putRandomValue(random_value) 
+        {
+            whatDoWeAsk.innerHTML = massive_in_game[random_value];
+            name_to_click = massive_in_game[random_value];
+        }
+        //функции выводят элемент, на который надо нажать
+
+        function startTimer()
+        {
+            timerId = setInterval(tick, 10);
+        }
+        function tick()
+        {
+            millisec++;
+            if (millisec >= 100) {
+                sec++;
+                millisec = millisec - 100;
+            }
+            if (sec >= 60) { //задаем числовые параметры, меняющиеся по ходу работы программы
+                min++;
+                sec = sec - 60;
+            }
+            if (millisec < 10) { //Визуальное оформление
+                if (sec < 10) {
+                    if (min < 10) {
+                        timer.innerHTML = min + ':0' + sec + ':0' + millisec;
+                    } else {
+                        timer.innerHTML = min + ':0' + sec + ':0' + millisec;
+                    }
+                } else {
+                    if (min < 10) {
+                        timer.innerHTML = min + ':' + sec + ':0' + millisec;
+                    } else {
+                        timer.innerHTML = min + ':' + sec + ':0' + millisec;
+                    }
+                }
+            } else {
+                if (sec < 10) {
+                    if (min < 10) {
+                        timer.innerHTML = min + ':0' + sec + ':' + millisec;
+                    } else {
+                        timer.innerHTML = min + ':0' + sec + ':' + millisec;
+                    }
+                } else {
+                    if (min < 10) {
+                        timer.innerHTML = min + ':' + sec + ':' + millisec;
+                    } else {
+                        timer.innerHTML = min + ':' + sec + ':' + millisec;
+                    }
+                }
+            }
+        }
+        function stopTimer()
+        {
+            clearInterval(timerId);
+        }
+
+        function myInit()
+        {
+
+            bloody_system = ["жёлтый круг", "красный круг", "зелёный круг", "синий круг"];
+            nervous_system = ["жёлтый квадрат", "зелёный квадрат", "красный квадрат", "синий квадрат"]
+            massive_of_maps = ["map-circles-1", "map-circles-2", "map-triangles-1", "map-squares-1", "map-stars-1"]
+            bone_system = ["ладьевидная кость","полулунная кость","трёхгранная кость","гороховидная кость","крюк крючковидной кости","крючковидная кость","головчатая кость","трапециевидная кость","кость-трапеция","первая пястная кость","основная фаланга большого пальца","концевая фаланга большого пальца","вторая пястная кость","основная фаланга","средняя фаланга","концевая фаланга","третья пястная кость","четвёртая пястная кость","пятая пястная кость","центральная кость"]
+            img_circles = byId("img-circles");
+            img_triangles = byId("img-triangles");
+            img_squares = byId("img-squares");
+            img_stars = byId("img-stars");
+            gameMode = 'circles';
+            tip_block = byId('tip');
+            whatDoWeAsk = byId('whatDoWeAsk');
+            btn_hand = byId('button-hand');
+            btn_stop_game = byId('btn_stop_game');
+            btn_bloody_system = byId('button-bloody-system');
+            btn_nervous_system = byId('button-nervous-system');
+            btn_muscle_system = byId('button-muscle-system');
+            btn_bone_system = byId('button-bone-system');
+            btn_settings_systems = byId('button-settings-systems');
+            btn_settings_random = byId('button-settings-random');
+            accuracy = byId('accuracy');
+            total_accuracy = byId('total-accuracy');
+            timer = byId('timer');
+            timer_total = byId('timer-total');
+
+            createCanvas("img-circles-1", 'myCanvasCircle1');
+            createCanvas("img-circles-2", 'myCanvasCircle2');
+            createCanvas("img-squares", 'myCanvasSquares');
+            createCanvas("img-stars-1", 'myCanvasStars');
+            createCanvas("img-triangles-1", 'myCanvasTriangles');
+            createDictionaryOfObjects();
+
+            active_button = byId("button-circles");
+            clickedButton(active_button, active_button);
+
+            showSettings();
+        }
+        //функция включает весь код сверху
+        </script>
+    <style>
+        html, body {
+            background-color: #141313;
+            color: white;
+            display: block;
+            margin: 0px 0px 0px 0px;
+            height:100%;
+        }
+        @font-face {
+            font-family: 'OpenSans-Light'; /* Гарнитура шрифта */
+            src: url(fonts/OpenSans-Light.ttf); /* Путь к файлу со шрифтом */
+        }
+        @font-face {
+            font-family: 'OpenSans-Bold';
+            src: local(OpenSans-Bold), url(fonts/OpenSans-Bold.ttf);
+        }
+        @font-face {
+            font-family: Raleway;
+            src: url(fonts/Raleway-Light.ttf);
+        }
+        @font-face {
+            font-family: Montserrat;
+            src: url(fonts/Montserrat-Light.otf);
+        }
+        @font-face {
+            font-family: Montserrat-Bold;
+            src: url(fonts/Montserrat-Bold.otf);
+        }
+        @font-face {
+            font-family: Lato;
+            src: url(fonts/Lato-Regular.ttf);
+        }
+        p {
+            font-family: Lato, Arial, 'Times New Roman';
+        }
+        p.subtitle {
+            text-align: left;
+            font-size: 27px;
+            margin: 0px 0px 0px 0px;
+            width: 150px;
+        }
+        hr {
+            width: 100%;
+            border: none;
+            margin: 0px 0px 0px 0px;
+            height: 2px;
+            background-color: white; /* Цвет линии */
+        }
+        button {
+            background-color: transparent;
+            border: none;
+            border-radius: 4px;
+            font-family: "Lato", "Arial";
+            font-size: 27px;
+            color: white;
+            text-align: center;
+            margin: 5px 15px 5px 15px;
+        }
+        .container button {
+            padding: 0px 15px 0px 15px;
+        }
+        .underline-on-hover:hover {
+            text-decoration: underline;
+        }
+        .header {
+            background-color: #383737;
+            padding: 10px 15px 10px 5px;
+            display: flex;
+            justify-content: flex-end;
+            z-index: auto;
+        }
+        .header .container-1 {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .choose {
+            background-color: #212020;
+            padding: 5px 15px 5px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .choose .container {
+            padding: 0px 30px 0px 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .game {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            height: 100%;
+        }
+        .images {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .contain-img-and-subtitle {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .images img {
+            margin: auto;
+        }
+        #img-circles {
+            display: flex;
+        }
+        #img-triangles {
+            display: none;
+        }
+        #img-squares {
+            display: none;
+        }
+        #img-stars {
+            display: none;
+        }
+        map {
+            z-index: 4;
+        }
+        .bottom {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: calc(100% - 30px);
+            height: 80px;
+            padding: 0px 15px 0px 15px;
+            display: flex;
+            justify-content: space-between;
+            background-color: #212020;
+            text-align: center;
+            font-size: 23px;
+        }
+        canvas {
+            pointer-events: none;       /* make the canvas transparent to the mouse - needed since canvas is position infront of image */
+            position: absolute;
+        }
+        .tip {
+            z-index: 9;
+            display: none;
+            position: fixed;
+            border: #383737;
+            border-radius: 4px;
+            padding: 5px 5px 5px 5px;
+            background-color: #d62222;
+            transition: all 0s;
+        }
+        .container-of-window-game-ended {
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            z-index: 10;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .container-of-window-settings {
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .window-of-ended-game {
+            z-index: 10;
+            background-color: #383737;
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px;
+            width: 600px;
+            padding: 15px 20px 15px 20px;
+        }
+        .header-of-finish {
+            font-family: Montserrat, Lato;
+            font-size: 35px;
+            font-weight: 1000;
+            display: flex;
+            justify-content: center;
+        }
+        .result-of-playing {
+            display: flex;
+            justify-content: space-between;
+        }
+        .result-of-playing p {
+            font-family: Lato, Montserrat;
+            font-size: 27px;
+            margin: 15px 0 15px 0;
+        }
+        .layer-of-button-num-1 {
+            display: flex;
+            justify-content: space-between;
+        }
+        .layer-of-button-num-1 button {
+            width: 250px;
+        }
+        .layer-of-button-num-2 {
+            display: flex;
+            justify-content: center;
+        }
+        .window-of-ended-game button {
+            background-color: #4f4f4f;
+            border: none;
+            border-radius: 4px;
+            font-family: "Lato", "Arial";
+            font-size: 27px;
+            color: white;
+            text-align: center;
+            margin: 5px 15px 5px 15px;
+            padding: 0 10px 5px 10px;
+        }
+        .window-of-settings {
+            z-index: 10;
+            background-color: #383737;
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px;
+            width: max-content;
+            padding: 15px 20px 15px 20px;
+        }
+        .header-of-settings {
+            font-family: Montserrat, Lato;
+            font-size: 35px;
+            font-weight: 1000;
+            display: flex;
+            justify-content: center;
+        }
+        .container-of-choosing {
+            margin: 30px 0 5px 0;
+
+        }
+        .container-of-systems {
+            display: flex;
+            justify-content: space-between;
+        }
+        .title-of-choosing {
+            font-family: Montserrat-Bold, Lato;
+            font-size: 25px;
+            font-weight: 1000;
+        }
+        .result-of-playing {
+            display: flex;
+            justify-content: space-between;
+        }
+        .result-of-playing p {
+            font-family: Lato, Montserrat;
+            font-size: 27px;
+            margin: 15px 0 15px 0;
+        }
+        .layer-of-button-num-1 {
+            display: flex;
+            justify-content: space-between;
+        }
+        .layer-of-button-num-1 button {
+            width: 250px;
+        }
+        .layer-of-button-num-2 {
+            display: flex;
+            justify-content: center;
+        }
+        .window-of-settings button {
+            background-color: transparent;
+            border: none;
+            border-radius: 4px;
+            font-family: "Lato", "Arial";
+            font-size: 27px;
+            color: white;
+            text-align: center;
+            margin: 5px 15px 5px 15px;
+            padding: 0 10px 5px 10px;
+        }
+        .container-for-ok {
+            display: flex;
+            justify-content: flex-end;
+        }
+        button.ok {
+            background-color: #4f4f4f;
+            width: 100px; 
+        }
+    </style>
+</head>
+<body onload='myInit();'>
+    <div class='main'>
+    <!--<canvas id='myCanvasTriangle1'></canvas>
+        <canvas id='myCanvasTriangle2'></canvas> -->
+        <div class='header'>
+            <div class="container-1">
+                <button class="underline-on-hover" id="btn_home_header" onclick="location.href='The_SAM.html'">В главное меню</button>
+                <button class="underline-on-hover">Справка</button>
+                <button class="underline-on-hover" id='btn_stop_game' onclick="showResult();">Стоп!</button>
+            </div>
+        </div>
+        <hr>
+        <div class='choose'>
+            <p class='subtitle'>Выбранная система:</p>
+            <div class='container'>
+                <button id="button-stars" class="underline-on-hover" onclick="pressingButton(this);" iscreated = 'false' canvas1="myCanvasStars" img1='img-stars-1'>Звёзды</button>
+                <button id="button-squares" class="underline-on-hover" onclick="pressingButton(this);" iscreated = 'false' canvas1="myCanvasSquares" img1='img-squares-1'>Квадраты</button>
+                <button id="button-circles" class="underline-on-hover" onclick="pressingButton(this);">Костная</button>
+                <button id="button-triangles" class="underline-on-hover" onclick="pressingButton(this);" iscreated = 'false' canvas1="myCanvasTriangles" img1='img-triangles-1'>Треугольники</button>
+            </div>
+        </div>
+        <div class='container-of-window-game-ended' id="window-game-ended">
+            <div class='window-of-ended-game'>
+                <div class='header-of-finish'>Итог</div>
+                <div class='result-of-playing'>
+                    <p>Ваш результат:</p>
+                    <p id='total-accuracy'></p>
+                </div>
+                <div class='result-of-playing'>
+                    <p>Время прохождения:</p>
+                    <p id="timer-total">00:00</p>
+                </div>
+                <div class='layer-of-button-num-1'>
+                    <button id='' class="underline-on-hover" onclick="openSettings();">Другие настройки</button>
+                    <button id='' class="underline-on-hover" onclick="location.href='The_SAM.html'">В главное меню</button>
+                </div>
+                <div class='layer-of-button-num-2'>
+                    <button id='' class="underline-on-hover" onclick="startTest();">Ещё раз</button>
+                </div>
+            </div>
+        </div>
+        <div class='container-of-window-settings' id="window-settings">
+            <div class='window-of-settings'>
+                <div class="header-of-settings">Настройки теста</div>
+                <div class="container-of-choosing">
+                    <div class="title-of-choosing">Выберите часть тела:</div>
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-hand">Рука</button>
+                </div>
+                <div class="container-of-choosing">
+                    <div class="title-of-choosing">Выберите систему(-ы):</div>
+                    <div class="container-of-systems">
+                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-bone-system">Костная</button>
+                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-nervous-system">Нервная</button>
+                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-bloody-system">Кровеносная</button>
+                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-muscle-system">Мышечная</button>
+                    </div>
+                </div>
+                <div class="container-of-choosing">
+                    <div class="title-of-choosing">В каком порядке задавать вопросы?</div>
+                    <div class="container-of-systems">
+                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" option="one" id="button-settings-systems" group="1">По системам</button>
+                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" option="one" id="button-settings-random" group="1">В случайном порядке</button>
+                    </div>
+                </div>
+                <div class="container-for-ok">
+                    <button class="ok underline-on-hover" onclick="closeSettings(this);" >OK</button>
+                </div>
+            </div>
+        </div>
+        <div class='game'>
+            <div class='tip' id='tip'></div>
+            <div class='images' id="img-circles">
+                <div class="contain-img-and-subtitle">
+                    <p style="height: 10px"></p>
+                    <img src="/img/костная-спереди-обрезанная-обработанная.png" alt="Перезагрузите страницу" height="266" width="460" usemap="#circles1" id="img-circles-1" id-of-neighbour="map-circles-2">
+                    <map name="circles1" id='map-circles-1' canvas-id='myCanvasCircle1' id-of-neighbour="map-circles-2">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="29,158,22,152,18,144,11,134,4,122,3,120,2,115,2,111,4,104,7,101,9,100,13,101,16,103,20,107,20,110,23,116,26,121,30,122,31,123,32,123,44,122,45,123,45,126,46,127,46,131,47,132,48,136,46,136,43,140,41,144,41,145,34,152,33,156,32,158,29,158" class="area" href="#" alt="ладьевидная кость" name="Ладьевидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="4,104,2,100,1,96,1,89,2,84,6,74,11,66,17,62,19,61,22,62,26,67,29,72,32,77,33,82,33,89,25,97,24,100,22,103,22,105,20,107,16,103,13,101,9,100,7,101" class="area" href="#" alt="полулунная кость" name="Полулунная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="19,61,19,55,21,49,23,43,24,41,31,34,27,41,27,44,40,55,47,55,52,49,52,43,45,34,53,34,58,39,60,43,60,45,59,46,58,48,57,59,56,62,46,71,34,81,32,77,29,72,26,67,22,62" class="area" href="#" alt="трёхгранная кость" name="Трёхгранная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="31,34,27,41,27,44,40,55,47,55,52,49,52,43,45,34" class="area" href="#" alt="гороховидная кость" name="Гороховидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="61,44,69,44,77,53,83,63,84,65,84,72,80,75,67,75,63,71,63,69,61,67,58,67,56,62,57,59,58,48,59,46" class="area" href="#" alt="крюк крючковидной кости" name="Крюк крючковидной кости">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="58,67,61,67,63,69,63,71,67,75,80,75,84,72,86,72,86,74,79,81,78,88,78,91,73,95,71,93,65,91,60,91,56,93,45,93,38,90,33,90,33,82,34,81,46,71,56,62," class="area" href="#" alt="крючковидная кость" name="Крючковидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="33,90,38,90,45,93,56,93,60,91,65,91,71,93,73,95,71,99,71,107,74,120,74,122,68,125,57,119,47,119,44,122,42,123,31,123,30,122,26,121,23,116,20,110,20,107,22,105,22,103,24,100,25,97" class="area" href="#" alt="головчатая кость" name="Головчатая кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="47,119,57,119,68,125,71,129,71,142,70,144,67,148,67,149,64,149,53,137,50,136,47,132,46,131,46,127,45,126,45,123" class="area" href="#" alt="трапециевидная кость" name="Трапециевидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="46,136,50,136,53,137,64,149,66,150,66,173,56,183,53,183,49,180,43,180,40,177,36,169,34,167,34,152,41,145,41,144,43,140" class="area" href="#" alt="кость-трапеция" name="Кость-трапеция">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="66,150,70,150,71,151,76,155,106,189,116,196,125,201,135,205,137,205,138,206,152,206,153,205,154,205,154,199,158,199,163,204,165,216,166,217,163,228,154,237,144,237,134,229,124,225,101,212,81,202,67,193,61,191,59,189,58,187,58,182,66,175" class="area" href="#" alt="первая пястная кость" name="Первая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="169,214,173,214,176,215,188,225,207,235,214,237,222,235,231,235,235,238,235,260,232,263,224,263,219,261,212,257,201,252,194,249,186,246,185,245,170,245,169,246,162,246,154,237,163,228,166,217" class="area" href="#" alt="основная фаланга большого пальца" name="Основная фаланга большого пальца">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="241,237,245,237,257,246,278,246,285,249,288,253,288,259,285,262,280,264,271,264,267,263,262,262,262,261,249,261,243,264,238,264,236,262,236,242," class="area" href="#" alt="концевая фаланга большого пальца" name="Концевая фаланга большого пальца">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="74,122,79,124,91,131,96,131,97,133,104,140,117,144,128,146,142,148,162,152,167,154,185,154,192,151,194,151,205,159,207,159,213,163,213,165,215,168,215,178,209,190,203,192,197,192,192,191,184,183,168,177,148,169,123,164,123,163,112,163,87,166,76,155,71,151,70,150,67,149,67,148,70,144,71,142,71,129,68,125," class="area" href="#" alt="вторая пястная кость" name="Вторая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="216,159,225,159,245,167,283,173,285,174,300,174,301,173,308,173,314,177,314,185,312,191,312,194,313,195,313,199,310,202,309,202,308,203,300,203,293,201,291,199,288,199,272,195,264,193,239,193,222,196,214,196,210,192,210,189,215,178,215,168,213,165,213,162" class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="323,172,327,172,333,178,351,183,352,184,369,184,371,183,374,183,377,184,380,186,378,198,378,205,375,208,372,208,354,202,352,201,336,201,320,205,318,205,312,201,313,199,313,195,312,194,312,191,314,185,314,177,319,173," class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="381,184,384,184,387,185,398,192,403,192,404,191,417,191,424,196,424,201,419,206,410,206,403,204,402,203,396,203,391,205,385,207,380,207,378,205,378,198,380,186," class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="74,94,77,94,86,97,87,98,91,98,92,97,95,97,125,106,136,106,137,107,163,107,164,106,170,106,188,101,197,101,211,104,214,105,218,107,221,118,221,121,217,133,215,133,212,136,192,136,177,129,175,129,144,125,129,125,113,128,110,128,102,132,97,132,96,131,91,131,79,124,74,122,74,120,71,107,71,99,73,95" class="area" href="#" alt="третья пястная кость" name="Третья пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="223,102,230,102,237,106,242,106,261,112,313,112,320,109,329,109,334,113,334,120,331,124,331,128,336,135,336,137,330,143,323,143,308,138,301,137,300,136,255,136,254,137,246,137,234,139,220,139,217,136,217,133,221,121,221,118,218,107,221,103" class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="337,109,345,109,371,120,381,120,394,118,407,118,409,120,408,130,410,140,407,143,398,143,382,139,353,139,348,143,339,143,338,142,338,139,336,137,336,135,331,128,331,124,334,120,334,113" class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="413,118,415,118,427,124,428,125,447,125,457,132,458,135,455,138,450,141,440,141,433,139,426,139,418,143,413,143,410,140,408,130,409,120" class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="100,65,103,65,112,66,120,70,125,70,126,71,132,71,159,64,177,57,182,56,199,56,206,59,210,65,211,72,209,82,203,86,195,88,181,88,159,83,141,83,125,87,119,87,110,95,94,95,92,97,91,98,87,98,86,97,77,94,74,94,78,91,78,88,79,81,86,74,86,72,91,72" class="area" href="#" alt="четвёртая пястная кость" name="Четвёртая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="210,51,219,51,246,57,251,57,279,52,283,52,289,49,294,48,308,48,311,51,311,63,313,71,313,73,310,76,307,77,302,77,292,75,267,75,266,76,253,76,252,77,245,77,244,78,239,78,226,84,221,86,211,86,209,84,209,82,211,72,210,65,206,59,206,55" class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="316,46,324,46,355,52,359,52,360,53,368,53,369,52,374,51,385,51,387,53,386,60,387,68,387,71,384,74,380,74,355,72,342,72,328,77,325,77,324,78,319,78,316,75,315,73,315,71,312,63,312,50" class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="391,49,395,49,408,57,412,57,416,55,423,55,428,56,432,60,433,62,433,67,429,71,422,73,415,73,411,68,404,68,403,69,401,69,395,74,390,74,387,71,387,68,386,60,387,53," class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="79,36,99,36,134,29,135,29,146,25,154,21,161,16,163,15,172,13,184,13,189,18,191,24,191,33,176,42,172,43,146,43,132,47,130,47,120,52,118,52,106,62,103,62,100,65,91,72,86,72,84,65,83,63,77,53,69,44,74,39,77,37" class="area" href="#" alt="пятая пястная кость" name="Пятая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="190,6,197,6,217,9,233,8,245,8,257,3,260,2,268,2,272,4,272,14,274,24,274,25,271,26,254,26,241,28,227,28,212,32,200,38,189,38,189,35,191,33,191,24,189,18,183,12,183,10,187,7" class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="276,1,278,1,282,2,297,7,305,7,320,3,325,3,326,4,325,14,327,19,327,22,319,22,306,20,297,20,290,23,289,23,282,27,276,27,274,25,274,24,272,14,272,4" class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle1");' onmouseout='myLeave(this, "myCanvasCircle1");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="330,2,332,2,343,6,344,7,350,7,351,6,360,6,364,8,365,9,365,15,363,17,361,18,351,18,347,16,342,16,334,21,329,21,327,19,325,14,326,4" class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                    </map>
+                    <p>Правая рука, ладонная поверхность</p>
+                </div>
+                <div class="contain-img-and-subtitle">
+                    <p style="height: 10px"></p>
+                    <img usemap="#circles2" src="/img/костная-сзади-обрезанная-обработанная.png" alt="Перезагрузите страницу" height="266" width="460" id="img-circles-2">
+                    <map name="circles2" id='map-circles-2' canvas-id='myCanvasCircle2' id-of-neighbour="map-circles-1">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="26,209,30,210,41,218,38,219,30,219,26,215" class="area" href="#" alt="гороховидная кость" name="Гороховидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="28,184,30,184,47,196,51,202,57,210,49,218,41,218,30,210,26,209,20,202,20,196" class="area" href="#" alt="трёхгранная кость" name="Трёхгранная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="18,157,22,157,29,165,30,173,30,175,28,178,28,184,20,196,19,197,17,197,6,186,3,176,3,170,7,163" class="area" href="#" alt="полулунная кость" name="Полулунная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="30,108,36,108,39,110,39,116,49,126,49,127,42,134,37,134,33,136,30,139,28,144,28,153,24,157,18,157,7,163,7,162,5,162,1,156,1,150,2,147,11,131,19,120,24,115,26,115" class="area" href="#" alt="ладьевидная кость" name="Ладьевидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="37,170,58,170,79,174,79,194,82,197,82,198,75,206,73,206,68,204,67,204,63,207,63,210,57,210,51,202,47,196,30,184,28,184,28,178,30,175" class="area" href="#" alt="крючковидная кость" name="Крючковидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="37,134,41,134,41,140,45,144,48,144,50,143,54,138,66,141,66,142,73,147,78,149,80,151,83,163,85,164,85,166,81,170,79,174,58,170,37,170,30,175,30,173,29,165,22,157,24,157,28,153,28,144,30,139,33,136" class="area" href="#" alt="головчатая кость" name="Головчатая кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="49,127,52,127,56,131,56,135,54,138,50,143,48,144,45,144,41,140,41,135" class="area" href="#" alt="центральная кость" name="Центральная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="42,109,51,109,52,110,59,110,60,109,62,109,72,119,72,134,70,134,67,136,65,140,61,140,60,139,55,138,55,137,56,135,56,131,52,127,49,127,49,126,39,116,39,111" class="area" href="#" alt="трапециевидная кость" name="Трапециевидная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="49,78,53,78,57,83,57,86,59,86,67,89,70,90,74,93,76,95,76,98,73,98,69,100,64,105,63,109,60,109,59,110,52,110,51,109,42,109,39,111,39,110,36,108,35,108,31,103,31,100,33,98,33,95,32,94,32,90,34,86,37,83,40,82,46,80" class="area" href="#" alt="кость-трапеция" name="Кость-трапеция">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="59,73,70,69,72,69,84,62,103,54,127,44,136,38,142,33,147,31,150,31,154,33,160,39,165,48,165,56,164,59,159,65,155,67,150,67,140,65,118,71,102,80,100,81,91,90,90,95,88,95,87,96,84,98,78,98,76,95,74,93,70,90,67,89,59,86,57,83,57,82,59,80,57,78,57,75" class="area" href="#" alt="первая пястная кость" name="Первая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="159,28,164,27,170,26,199,23,203,22,207,21,220,15,228,11,230,11,230,14,237,21,238,25,238,31,234,35,232,36,211,36,197,42,193,44,176,60,173,60,169,61,164,59,165,56,165,48,160,39,154,33,155,31,157,29" class="area" href="#" alt="основная фаланга большого пальца" name="Основная фаланга большого пальца">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="231,9,251,9,265,2,270,1,277,1,279,3,279,7,269,15,267,16,262,17,258,18,245,31,242,33,239,33,238,32,238,25,237,21,230,14,230,11" class="area" href="#" alt="концевая фаланга большого пальца" name="Концевая фаланга большого пальца">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="73,98,76,98,78,98,84,98,87,96,88,95,90,95,95,99,100,99,101,100,117,100,139,96,145,95,148,94,165,88,168,87,182,78,190,78,191,77,199,77,203,79,207,82,213,93,213,106,208,111,196,114,191,114,172,110,165,110,135,116,117,121,99,129,97,130,82,134,72,131,72,119,63,109,64,105,69,100" class="area" href="#" alt="вторая пястная кость" name="Вторая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="209,75,218,75,232,78,243,78,267,75,296,67,306,67,308,69,308,80,310,83,311,87,311,92,308,95,305,96,296,96,285,94,277,95,254,99,242,103,231,108,230,108,224,114,218,114,212,111,212,108,213,106,213,93,207,82,206,81,206,78" class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="311,65,315,65,330,69,345,69,366,63,373,63,375,65,375,67,373,73,373,77,376,83,373,86,364,86,363,85,345,85,339,86,326,96,320,97,315,97,311,93,311,87,310,83,308,80,308,69" class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="377,61,383,61,394,67,403,67,407,65,412,65,416,66,420,68,423,71,423,74,420,77,414,80,411,81,408,81,407,80,393,80,386,86,380,86,376,83,373,77,373,73,375,67,375,64" class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="97,130,101,130,120,135,134,136,159,136,174,133,175,133,191,127,197,126,214,126,218,127,223,138,223,149,219,160,216,161,202,161,200,163,196,163,174,156,167,156,166,155,136,155,135,156,120,157,115,158,106,163,101,165,86,165,83,163,80,151,78,149,73,147,66,142,66,141,65,140,67,136,70,134,82,134" class="area" href="#" alt="третья пястная кость" name="Третья пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="220,124,222,123,226,123,245,129,260,131,285,131,304,127,313,124,320,124,329,126,330,127,330,131,329,132,328,139,329,144,329,151,325,155,320,155,296,152,264,152,247,156,243,157,241,157,230,163,227,164,224,164,222,163,220,162,219,160,223,149,223,138,218,127" class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="334,123,340,123,353,128,364,128,365,129,381,129,382,128,394,124,402,124,405,126,403,132,402,134,402,136,403,137,405,141,405,145,404,147,401,148,394,148,386,146,385,145,370,145,369,146,354,149,345,152,341,154,339,155,336,155,333,154,329,151,329,144,328,139,329,132,330,131,330,127" class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="408,122,410,122,416,128,419,128,420,129,430,129,431,128,436,124,442,124,450,126,452,127,458,133,458,136,444,144,439,144,432,140,423,140,411,148,408,148,405,145,405,141,403,137,402,136,402,134,403,132,405,126" class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="86,165,101,165,106,166,125,177,133,177,134,178,163,178,183,174,192,174,202,175,209,178,212,180,214,182,215,192,215,197,214,198,213,202,209,207,207,208,201,208,200,207,187,207,172,199,142,193,129,191,112,191,101,195,99,196,84,196,82,197,79,194,79,174,81,170,85,166" class="area" href="#" alt="четвёртая пястная кость" name="Четвёртая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="217,174,226,174,246,182,254,183,262,184,265,185,279,186,292,187,299,187,308,184,319,184,323,187,323,192,320,197,320,203,324,210,323,213,306,213,285,207,246,207,230,212,221,212,213,210,211,209,211,205,213,202,214,198,215,197,215,192,214,182,213,181,213,178" class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="325,182,332,182,338,185,340,186,346,187,364,187,388,182,399,182,401,184,400,197,402,200,402,204,399,207,393,207,382,205,359,205,344,210,340,210,332,216,328,216,324,210,320,203,320,197,323,192,323,187" class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="403,182,406,182,415,187,426,187,431,183,437,183,445,188,445,196,442,199,439,200,431,200,430,199,422,199,410,207,407,207,402,204,402,200,400,197,401,184" class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="84,196,99,196,108,205,137,218,155,222,175,222,176,221,182,221,188,222,195,225,195,229,196,232,196,240,195,245,190,251,183,251,180,249,177,249,175,251,173,251,151,239,133,234,117,230,99,227,83,227,75,221,70,221,66,217,65,213,63,210,63,207,67,204,68,204,73,206,75,206,82,198,82,197," class="area" href="#" alt="пятая пястная кость" name="Пятая пястная кость">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="197,222,200,222,204,223,223,232,224,232,236,235,259,239,262,240,274,240,279,237,283,237,290,241,292,243,291,255,291,261,288,264,281,264,265,259,235,256,234,255,222,255,205,258,195,258,192,255,188,255,188,252,190,251,195,245,196,240,196,232,195,229,195,225," class="area" href="#" alt="основная фаланга" name="Основная фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="293,237,297,237,314,244,322,244,331,241,341,241,342,242,341,254,342,254,344,263,339,263,338,264,335,264,330,260,312,260,298,264,294,264,291,261,291,255,292,243,290,241,290,240" class="area" href="#" alt="средняя фаланга" name="Средняя фаланга">
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasCircle2");' onmouseout='myLeave(this, "myCanvasCircle2");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="344,240,347,240,360,246,364,246,367,244,371,244,378,250,378,254,374,258,372,259,368,259,366,257,354,257,350,261,349,262,346,262,342,258,342,254,341,254,342,242," class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+
+                    </map>
+                    <p>Правая рука, тыльная поверхность</p>
+                </div>
+                <canvas id='myCanvasCircle1'></canvas>
+                <canvas id='myCanvasCircle2'></canvas>
+            </div>
+            <div class='images' id="img-triangles">
+                <div class="contain-img-and-subtitle">
+                    <p style="margin: 8px 0 8px 0"></p>
+                    <img src="/img/кровеносная.png" usemap="#triangles1" alt="Перезагрузите страницу" height="326" width="450" id="img-triangles-1">
+                    <map name="triangles1" id='map-triangles-1' canvas-id='myCanvasTriangles'> 
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasTriangles");' onmouseout='myLeave(this, "myCanvasTriangles");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="344,240,347,240,360,246,364,246,367,244,371,244,378,250,378,254,374,258,372,259,368,259,366,257,354,257,350,261,349,262,346,262,342,258,342,254,341,254,342,242," class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <!--<area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" coords="38,34,115,34,115,110,38,110" class="area" href="#" alt="Квадрат" name="красный квадрат">-->
+                    </map>
+                    <p>Правая рука, ладонная поверхность</p>
+                </div>
+                <canvas id='myCanvasTriangles'></canvas>
+                <!--<map name="triangles1" id='map-triangles-1'>
+                    <area shape="circle" onmouseover='myHover(this);' onmouseout='myLeave();' coords="68,57,42" class="area" href="#" alt="Круг">
+                </map>
+                <img usemap="#triangles1" src="/img/треугольники.png" alt="Перезагрузите страницу" height="250" width="443" id="img-triangles-1">
+                <img usemap='#triangles2' src="/img/треугольники_2.png" alt="Перезагрузите страницу" height="250" width="443" id="img-triangles-2">-->
+            </div>
+            <div class='images' id="img-squares">
+                <div class="contain-img-and-subtitle">
+                    <p style="margin: 8px 0 8px 0"></p>
+                    <img src="/img/мышечная.png" usemap="#squares1" alt="Перезагрузите страницу" height="326" width="450" id="img-squares-1">
+                    <map name="squares1" id='map-squares-1' canvas-id='myCanvasSquares'> 
+                        <map name="squares1" id='map-squares-1' canvas-id='myCanvasSquares'> 
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="2,136,34,129,64,124,91,121,99,120,99,140,93,137,84,134,53,134,35,136,14,140,2,142" class="area" href="#" alt="длинная ладонная мышца" latin="palmaris longus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="2,115,29,109,66,99,82,93,87,109,65,112,45,116,30,120,2,126" class="area" href="#" latin="flexor carpi radialis" alt="лучевой сгибатель запястья" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="2,178,37,167,37,147,34,138,53,135,78,135,75,142,75,154,77,164,79,169,80,174,85,178,85,183,80,190,66,183,58,181,36,181,2,192" class="area" href="#" latin="flexor carpi ulnaris" alt="локтевой сгибатель запястья" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="34,120,38,119,56,115,72,112,79,112,79,114,72,122,67,123,64,124,57,124,37,128,34,129" class="area" href="#" latin="flexor carpi ulnaris" alt="локтевой сгибатель запястья" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="30,81,46,79,57,79,64,87,81,87,81,91,66,98,32,107,32,101,23,87,23,84," class="area" href="#" alt="flexor carpi ulnaris" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="84,77,85,73,94,63,110,55,122,51,130,49,138,46,147,44,160,42,167,41,175,38,180,39,172,43,164,47,156,52,147,56,138,60,132,62,126,65,119,68,114,72,93,91,84,98" class="area" href="#" latin="flexor carpi ulnaris" alt="локтевой сгибатель запястья" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="89,94,93,91,114,72,119,68,126,65,132,62,138,60,147,56,156,52,164,47,172,43,180,39,193,35,216,35,209,42,193,51,188,55,172,75,154,100,142,111,122,126,120,118,117,118,114,119,114,115,107,115,104,111,104,107,99,107,97,104,91,103,95,100,95,96" class="area" href="#" alt="abductor pollicis brevis" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="125,123,142,111,154,100,172,75,188,55,193,51,209,42,216,35,222,33,224,35,209,50,193,66,186,77,176,97,161,118,142,134" class="area" href="#" alt="flexor pollicis brevis" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="227,31,248,18,255,15,260,15,267,14,285,8,291,5,293,5,295,8,295,15,294,17,287,24,274,32,259,46,246,52,208,67,197,72,193,74,190,76,186,77,193,66,209,50,224,35" class="area" href="#" alt="flexor pollicis longus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="186,77,190,76,193,74,197,72,204,69,204,82,205,85,219,105,206,107,189,112,182,114,172,118,159,124,148,131,161,118,176,97" class="area" href="#" alt="abductor pollicis transversus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="138,141,180,137,202,135,230,135,231,137,231,144,224,143,193,143,159,146,135,145" class="area" href="#" alt="abductor pollicis transversus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="218,125,226,122,227,125" class="area" href="#" alt="abductor pollicis transversus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="148,131,159,124,172,118,182,114,189,112,206,107,219,105,253,101,271,101,304,112,291,109,280,106,273,105,261,105,251,109,241,116,231,120,226,122,218,125,201,126,171,128" class="area" href="#" alt="I lumbrical" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="159,146,193,143,224,143,231,144,259,147,271,151,279,155,289,162,301,169,289,164,280,159,270,155,262,152,239,152,228,157,190,151" class="area" href="#" alt="II lumbrical" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="134,154,148,155,161,157,172,159,188,162,199,166,218,172,227,175,231,177,247,187,267,200,290,214,289,214,264,201,245,193,238,193,220,190,199,182,167,169,138,157" class="area" href="#" alt="III lumbrical" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="131,160,156,173,177,181,201,193,217,203,230,217,238,230,246,242,253,250,245,243,232,231,217,219,212,217,201,210,183,199,167,188,150,177,138,170,131,165" class="area" href="#" alt="IV lumbrical" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="132,170,147,181,172,198,186,208,199,218,211,228,209,228,208,227,200,227,206,238,185,225,170,211,152,199,142,193,137,191,136,186,133,175," class="area" href="#" alt="flexor digiti quinti brevis" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="84,174,87,176,94,179,94,186,98,190,118,190,125,192,129,195,131,196,135,196,137,194,137,191,142,193,152,199,170,211,185,225,206,238,225,249,231,253,238,260,246,268,250,273,257,277,267,283,273,288,268,288,262,286,256,283,253,281,244,274,244,273,234,264,217,256,206,251,200,249,196,249,195,248,183,245,171,240,158,235,147,231,136,225,124,220,113,214,103,208,91,199,82,192,82,190,85,183,85,178,80,174" class="area" href="#" alt="abductor digiti quinti (minimi)" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="251,109,261,105,273,105,280,106,291,109,304,112,316,115,319,115,330,113,341,113,364,116,378,122,385,123,397,121,408,121,430,129,434,133,434,139,430,142,424,143,419,144,397,144,389,140,379,140,372,142,367,143,349,144,328,144,314,142,293,143,268,142,265,142,264,146,259,147,254,146,231,144,231,137,230,135,257,134,259,130,259,122,258,115,257,114,256,111,250,111" class="area" href="#" alt="sheath of flexor tendons" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="209,90,219,91,234,94,250,96,258,96,263,97,269,99,271,101,253,101,219,105" class="area" href="#" alt="sheath of flexor tendons" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="228,157,239,152,262,152,270,155,280,159,289,164,301,169,307,172,313,173,334,173,345,175,351,176,359,178,365,180,371,183,375,184,379,187,384,189,386,190,404,190,415,193,418,194,427,200,435,202,439,203,443,207,443,213,440,216,431,215,425,216,404,216,397,215,383,210,379,209,370,209,367,210,361,211,347,211,337,209,325,207,320,205,312,202,307,199,274,198,261,196,247,187,231,177,227,175,224,173,226,173,241,176,246,176,246,180,254,182,286,188,310,193,333,200,361,206,376,206,388,206,387,200,396,201,396,200,387,197,391,195,379,191,367,185,357,182,347,179,333,177,312,175,300,172,290,169,276,164,259,158,254,157,252,157,251,158,251,163" class="area" href="#" alt="II sheath of flexor tendons" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="295,216,304,216,317,218,328,221,337,224,345,227,349,228,357,234,364,237,378,238,391,242,399,247,405,251,410,254,413,257,413,262,409,266,380,266,373,265,367,259,353,256,332,256,319,252,314,251,300,245,293,241,288,239,280,239,268,237,254,234,243,231,238,230,230,217,217,203,234,211,234,214,243,219,258,226,277,234,294,240,300,242,308,245,317,248,324,250,332,252,347,252,358,251,359,250,363,242,355,236,345,230,337,227,318,221,300,218" class="area" href="#" alt="III sheath of flexor tendons" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="291,222,295,223,314,227,321,227,330,230,335,230,336,231,341,233,321,234,320,235,323,239,331,243,344,251,328,246,310,239,295,232,289,227,297,227" class="area" href="#" alt="III sheath of flexor tendons" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="245,243,253,250,257,253,262,254,270,258,276,263,281,268,284,272,288,277,296,282,308,287,314,292,319,298,324,305,329,309,331,312,331,317,329,319,327,320,323,320,312,316,303,312,298,309,289,302,282,297,277,293,272,290,273,288,293,298,294,294,297,292,303,293,303,291,289,283,277,274,268,266,265,265,254,258,239,244," class="area" href="#" alt="IV sheath of flexor tendons" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="200,227,208,227,209,228,211,228,225,249,206,238" class="area" href="#" alt="IV sheath of flexor tendons" name="Длинная ладонная мышца">
+    
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="148,131,171,128,201,126,218,125,227,125,258,123,259,122,259,130,257,134,230,135,202,135,180,137,138,141,143,135" class="area" href="#" alt="I flexor digitorum sublimis" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="135,145,159,146,190,151,228,157,251,163,251,158,252,157,254,157,259,158,276,164,290,169,300,172,312,175,333,177,347,179,357,182,367,185,379,191,377,191,361,188,345,185,335,183,322,182,292,181,314,189,356,201,374,205,376,206,361,206,333,200,310,193,286,188,254,182,247,181,246,180,246,176,241,176,226,173,224,173,218,172,199,166,188,162,172,159,161,157,148,155,132,153,132,150," class="area" href="#" alt="II flexor digitorum sublimis" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="132,153,134,154,138,157,167,169,199,182,220,190,243,198,243,195,245,193,248,195,264,201,266,203,287,214,294,218,300,218,318,221,337,227,345,230,355,236,352,236,345,233,341,233,336,231,335,230,330,230,321,227,314,227,295,223,291,222,297,227,289,227,282,226,295,232,310,239,328,246,344,251,347,252,332,252,324,250,317,248,308,245,300,242,294,240,277,234,258,226,243,219,234,214,234,211,217,203,201,193,177,181,156,173,131,160" class="area" href="#" alt="III flexor digitorum sublimis" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="131,165,138,170,150,177,167,188,183,199,201,210,212,217,217,219,223,227,235,243,235,244,228,250,225,249,211,228,199,218,186,208,172,198,147,181,132,170" class="area" href="#" alt="IV flexor digitorum sublimis" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="292,181,322,182,335,183,345,185,361,188,377,191,379,191,391,195,387,197,396,200,396,201,387,200,388,206,376,206,374,205,356,201,314,189," class="area" href="#" alt="I flexor digitorum profundus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="321,234,341,233,345,233,352,236,363,242,359,250,358,251,344,251,331,243,323,239,320,235" class="area" href="#" alt="II flexor digitorum profundus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="235,244,239,244,254,258,265,265,268,266,277,274,289,283,303,291,303,293,297,292,294,294,293,298,282,288,269,279,251,267,246,264,238,257,230,249" class="area" href="#" alt="III flexor digitorum profundus" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="89,94,95,96,95,100,91,103,97,104,99,107,104,107,104,111,107,115,114,115,114,119,117,118,120,118,122,126,125,123,142,134,139,137,137,140,134,143,132,147,130,151,130,158,125,158,121,159,116,165,116,169,113,169,112,166,109,164,106,160,103,160,102,158,100,155,101,121,99,119,72,122,79,114,79,112,87,109,84,98," class="area" href="#" alt="flexor retinaculum" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="81,134,84,134,93,137,99,140,100,140,100,155,100,166,99,171,97,176,94,179,87,176,84,174,79,169,77,164,77,158,81,150" class="area" href="#" alt="flexor retinaculum" name="Длинная ладонная мышца">
+                            <area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="100,155,102,158,103,160,106,160,109,164,112,166,113,169,116,169,116,165,121,159,125,158,130,158,131,165,132,170,133,175,136,186,137,191,137,194,135,196,131,196,129,195,125,192,118,190,98,190,94,186,94,179,97,176,99,171,100,166" class="area" href="#" alt="palmaris brevis" name="Длинная ладонная мышца">
+    
+                        <!--<area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" coords="38,34,115,34,115,110,38,110" class="area" href="#" alt="Квадрат" name="красный квадрат">-->
+                    </map>
+                    <p>Правая рука, тыльная поверхность</p>
+                </div>
+                <canvas id='myCanvasSquares'></canvas>
+            </div>
+            <div class='images' id="img-stars">
+                <div class="contain-img-and-subtitle">
+                    <p style="margin: 8px 0 8px 0"></p>
+                    <img usemap="#stars1" src="/img/нервы1.png" alt="Перезагрузите страницу" height="335" width="523" id="img-stars-1">
+                    <map name="stars1" id='map-stars-1' canvas-id='myCanvasStars'> 
+                        <area shape="poly" onmouseover='myHover(this, "myCanvasStars");' onmouseout='myLeave(this, "myCanvasStars");' onclick='clickedObject(this, event);' clicked="false" is_object_highlighted="false" coords="344,240,347,240,360,246,364,246,367,244,371,244,378,250,378,254,374,258,372,259,368,259,366,257,354,257,350,261,349,262,346,262,342,258,342,254,341,254,342,242," class="area" href="#" alt="концевая фаланга" name="Концевая фаланга">
+                        <!--<area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" coords="38,34,115,34,115,110,38,110" class="area" href="#" alt="Квадрат" name="красный квадрат">-->
+                    </map>
+                    <p>Правая рука, тыльная поверхность</p>
+                </div>
+                <canvas id='myCanvasStars'></canvas>
+            </div>
+            <!--<div class='images' id="img-stars">
+                <map name="stars1" id='map-stars-1'>
+                    <area shape="circle" onmouseover='myHover(this);' onmouseout='myLeave();' coords="68,57,42" class="area" href="#" alt="Круг">
+                </map>
+                <img usemap="#stars1" src="/img/звезды.png" alt="Перезагрузите страницу" height="250" width="443" id="img-stars-1">-->
+            </div>
+        </div>
+        <div class='bottom'>
+            <p id='timer'>0:00:00</p>
+            <p>Где находится <span id='whatDoWeAsk'>...</span>?</p>
+            <p>Точность: <span id="accuracy">0</span>%</p>
+        </div>
+    </div>
+</body>
+</html>

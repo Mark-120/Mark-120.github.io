@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #141313;
+            color: white;
+            
+        }
+        @font-face {
+            font-family: 'OpenSans-Light'; /* Гарнитура шрифта */
+            src: url(fonts/OpenSans-Light.ttf); /* Путь к файлу со шрифтом */
+        }
+        @font-face {
+            font-family: 'OpenSans-Bold';
+            src: local(OpenSans-Bold), url(fonts/OpenSans-Bold.ttf);
+        }
+        @font-face {
+            font-family: Raleway;
+            src: url(fonts/Raleway-Light.ttf);
+        }
+        @font-face {
+            font-family: Montserrat;
+            src: url(fonts/Montserrat-Light.otf);
+        }
+        @font-face {
+            font-family: Lato;
+            src: url(fonts/Lato-Regular.ttf);
+        }
+        
+        .container-of-window {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .window-of-ended-game {
+            z-index: 10;
+            background-color: #383737;
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px;
+            width: 600px;
+            padding: 15px 20px 15px 20px;
+        }
+        .header-of-finish {
+            font-family: Montserrat, Lato;
+            font-size: 35px;
+            font-weight: 1000;
+            display: flex;
+            justify-content: center;
+        }
+        .result-of-playing {
+            display: flex;
+            justify-content: space-between;
+        }
+        .result-of-playing p {
+            font-family: Lato, Montserrat;
+            font-size: 27px;
+            margin: 15px 0 15px 0;
+        }
+        .layer-of-button-num-1 {
+            display: flex;
+            justify-content: space-between;
+        }
+        .layer-of-button-num-1 button {
+            width: 250px;
+        }
+        .layer-of-button-num-2 {
+            display: flex;
+            justify-content: center;
+        }
+        .window-of-ended-game button {
+            background-color: #4f4f4f;
+            border: none;
+            border-radius: 4px;
+            font-family: "Lato", "Arial";
+            font-size: 27px;
+            color: white;
+            text-align: center;
+            margin: 5px 15px 5px 15px;
+            padding: 0 10px 5px 10px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class='container-of-window'>
+        <div class='window-of-ended-game'>
+            <div class='header-of-finish'>Итог</div>
+            <div class='result-of-playing'>
+                <p>Ваш результат:</p>
+                <p>%</p>
+            </div>
+            <div class='result-of-playing'>
+                <p>Время прохождения:</p>
+                <p>00:00</p>
+            </div>
+            <div class='layer-of-button-num-1'>
+                <button id='' class="underline-on-hover">Другие настройки</button>
+                <button id='' class="underline-on-hover">В главное меню</button>
+            </div>
+            <div class='layer-of-button-num-2'>
+                <button id='' class="underline-on-hover">Ещё раз</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

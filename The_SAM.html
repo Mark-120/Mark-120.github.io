@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The_SAAAAM</title>
+    <style>
+        body {
+            background-color: #141313;
+            color: white;
+        }
+        @font-face {
+            font-family: 'OpenSans-Light'; /* Гарнитура шрифта */
+            src: url(fonts/OpenSans-Light.ttf); /* Путь к файлу со шрифтом */
+        }
+        @font-face {
+            font-family: 'OpenSans-Bold';
+            src: local(OpenSans-Bold), url(fonts/OpenSans-Bold.ttf);
+        }
+        @font-face {
+            font-family: Raleway;
+            src: url(fonts/Raleway-Light.ttf);
+        }
+        @font-face {
+            font-family: Montserrat;
+            src: url(fonts/Montserrat-Light.otf);
+        }
+        header {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-family: 'OpenSans-Bold', 'Arial', cursive;
+            font-size:100px;
+            margin: 30px auto 30px auto;
+            height: 100px;
+        }
+        h3 {
+            font-family: "OpenSans-Bold";
+            font-size: 50px;
+            margin: 15px 60% 15px 0;
+        }
+        .title_page {
+            font-family: 'OpenSans-Light', 'Arial', cursive; /*Почему не работает?!*/
+            font-size: 50px;
+        }
+        p.text {
+            font-family: Raleway, 'Arial', 'Times New Roman';
+            font-size: 40px;
+        }
+        .fixed-container {
+            width: 1260px;
+            margin: auto 50px auto 50px;
+        }
+        .two-blocks {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+        }
+        .block {
+            display: flex;
+            width: fit-content;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin: 0 20px auto 20px;
+        }
+        li {
+            font-family: Montserrat;
+            font-size: 40px;
+        }
+        .li {
+            display: flex;
+            align-items: flex-start;
+            width: 80%;
+        }
+        .block p {
+            font-family: Raleway;
+            font-size: 30px;
+            width: 90%;
+        }
+        svg {
+            margin-left: 0;
+        }
+        p.end {
+            font-family: Raleway;
+            font-size: 36px;
+            display: flex;
+            justify-content: center;
+            margin: 16px auto 25px auto;
+        }
+        a {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The SAM</h1>
+        <p1 class="title_page"><b>S</b>tructural <b>A</b>tlas of <b>M</b>en</p1>
+    </header>
+    <div class="fixed-container">
+        <p class="text">Этот сайт создан для студентов медицинских факультетов и просто любознательных людей. 
+            Здесь вы можете изучить расположение органов и конечностей человека и 
+            проверить свои знания на 2D-тестах по анатомии</p>
+    </div>
+
+    <div class="fixed-container two-blocks">
+        <div class="block">
+            <h3>Theory</h3>
+            <div class="li">
+                <li><a href="guide.html">Справочник</a></li>
+            </div>
+            <p>В нём собрана информация об анатомических структурах, 
+                в том числе их расположении в теле человека</p>
+        </div>
+        <div class="block">
+            <h3>Practice</h3>
+            <div class="li">
+                <li><a href="test.html">Тесты</a></li>
+            </div>
+            <p>Здесь вы можете проверить, насколько хорошо 
+                вы знаете анатомическое строение частей тела </p>
+        </div>
+    </div>
+    <div class="fixed-container">
+        <hr>
+    </div>
+    <p class="end">
+        Сайт создан в качестве итогового проекта
+    </p>
+    <p class="end">
+        klimowmark1401@gmail.com - Климов Марк, автор данного сайта
+    </p>
+</body>
+</html>
