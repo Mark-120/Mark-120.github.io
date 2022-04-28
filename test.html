@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест</title>
+    <title>The SAM, тест по анатомии</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/icon.png">
     <script>
 
         let active_button;
@@ -506,59 +507,61 @@
 
         function recolourClickedButton(element)
         {
-            if (element.getAttribute('option') == 'one')
-            {
-                if (element.getAttribute('id') == 'button-settings-systems') 
+            if ((element.getAttribute('id') != 'button-nervous-system') & (element.getAttribute('id') != 'button-bloody-system')) {
+                if (element.getAttribute('option') == 'one')
                 {
-                    if (btn_settings_random.getAttribute('clicked') == 'false')
+                    if (element.getAttribute('id') == 'button-settings-systems') 
                     {
-                        if (element.getAttribute('clicked') == 'false')
+                        if (btn_settings_random.getAttribute('clicked') == 'false')
                         {
-                            element.style.backgroundColor = "#4f4f4f";
-                            element.setAttribute('clicked', 'true');
+                            if (element.getAttribute('clicked') == 'false')
+                            {
+                                element.style.backgroundColor = "#4f4f4f";
+                                element.setAttribute('clicked', 'true');
+                            }
+                            else {
+                                element.style.backgroundColor = "transparent";
+                                element.setAttribute('clicked', 'false');
+                            }
                         }
                         else {
-                            element.style.backgroundColor = "transparent";
-                            element.setAttribute('clicked', 'false');
+                            element.style.backgroundColor = "#4f4f4f";
+                            element.setAttribute('clicked', 'true')
+                            btn_settings_random.style.backgroundColor = "transparent";
+                            btn_settings_random.setAttribute('clicked', 'false');
                         }
                     }
                     else {
-                        element.style.backgroundColor = "#4f4f4f";
-                        element.setAttribute('clicked', 'true')
-                        btn_settings_random.style.backgroundColor = "transparent";
-                        btn_settings_random.setAttribute('clicked', 'false');
-                    }
-                }
-                else {
-                    if (btn_settings_systems.getAttribute('clicked') == 'false')
-                    {
-                        if (element.getAttribute('clicked') == 'false')
+                        if (btn_settings_systems.getAttribute('clicked') == 'false')
                         {
-                            element.style.backgroundColor = "#4f4f4f";
-                            element.setAttribute('clicked', 'true');
+                            if (element.getAttribute('clicked') == 'false')
+                            {
+                                element.style.backgroundColor = "#4f4f4f";
+                                element.setAttribute('clicked', 'true');
+                            }
+                            else {
+                                element.style.backgroundColor = "transparent";
+                                element.setAttribute('clicked', 'false');
+                            }
                         }
                         else {
-                            element.style.backgroundColor = "transparent";
-                            element.setAttribute('clicked', 'false');
+                            element.style.backgroundColor = "#4f4f4f";
+                            element.setAttribute('clicked', 'true')
+                            btn_settings_systems.style.backgroundColor = "transparent";
+                            btn_settings_systems.setAttribute('clicked', 'false');
                         }
                     }
-                    else {
-                        element.style.backgroundColor = "#4f4f4f";
-                        element.setAttribute('clicked', 'true')
-                        btn_settings_systems.style.backgroundColor = "transparent";
-                        btn_settings_systems.setAttribute('clicked', 'false');
-                    }
-                }
-            }
-            else {
-                if (element.getAttribute('clicked') == 'false')
-                {
-                    element.style.backgroundColor = "#4f4f4f";
-                    element.setAttribute('clicked', 'true')
                 }
                 else {
-                    element.style.backgroundColor = "transparent";
-                    element.setAttribute('clicked', 'false')
+                    if (element.getAttribute('clicked') == 'false')
+                    {
+                        element.style.backgroundColor = "#4f4f4f";
+                        element.setAttribute('clicked', 'true')
+                    }
+                    else {
+                        element.style.backgroundColor = "transparent";
+                        element.setAttribute('clicked', 'false')
+                    }
                 }
             }
             
@@ -1131,6 +1134,15 @@
             background-color: #4f4f4f;
             width: 100px; 
         }
+        .not-ready {
+            color: grey;
+        }
+        #button-bloody-system {
+            color: grey;
+        }
+        #button-nervous-system {
+            color: grey;
+        }
     </style>
 </head>
 <body onload='myInit();'>
@@ -1178,14 +1190,14 @@
                 <div class="header-of-settings">Настройки теста</div>
                 <div class="container-of-choosing">
                     <div class="title-of-choosing">Выберите часть тела:</div>
-                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-hand">Рука</button>
+                    <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-hand">Кисть руки</button>
                 </div>
                 <div class="container-of-choosing">
                     <div class="title-of-choosing">Выберите систему(-ы):</div>
                     <div class="container-of-systems">
                         <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-bone-system">Костная</button>
-                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-nervous-system">Нервная</button>
-                        <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-bloody-system">Кровеносная</button>
+                        <button class="underline-on-hover not-ready" onclick="recolourClickedButton(this);" clicked="false" id="button-nervous-system">Нервная</button>
+                        <button class="underline-on-hover not-ready" onclick="recolourClickedButton(this);" clicked="false" id="button-bloody-system">Кровеносная</button>
                         <button class="underline-on-hover" onclick="recolourClickedButton(this);" clicked="false" id="button-muscle-system">Мышечная</button>
                     </div>
                 </div>
@@ -1339,7 +1351,7 @@
     
                         <!--<area shape="poly" onmouseover='myHover(this, "myCanvasSquares");' onmouseout='myLeave(this, "myCanvasSquares");' onclick='clickedObject(this, event);' clicked="false" coords="38,34,115,34,115,110,38,110" class="area" href="#" alt="Квадрат" name="красный квадрат">-->
                     </map>
-                    <p>Правая рука, тыльная поверхность</p>
+                    <p>Левая рука, ладонная поверхность</p>
                     <canvas id='myCanvasSquares'></canvas>
                 </div>
             </div>
