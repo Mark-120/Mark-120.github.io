@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на грамотность</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Тест на грамотность</h1>
+        <p>Проверьте свои знания русского языка</p>
+    </header>
+
+    <div class="questions-container" id="questions-container">
+        <div class="question-block active" data-index="0">
+            <div class="question-number">Вопрос 1</div>
+            <div class="question-text" id="question-text-0"></div>
+        </div>
+    </div>
+
+    <div class="answers-container" id="answers-container">
+    </div>
+
+    <div class="no-questions hidden" id="no-questions">
+        Вопросы закончились
+    </div>
+
+    <div class="stats hidden" id="stats">
+        <h2>Результаты теста</h2>
+        <p id="score-text"></p>
+        <p>Нажмите на любой вопрос, чтобы увидеть правильный ответ</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

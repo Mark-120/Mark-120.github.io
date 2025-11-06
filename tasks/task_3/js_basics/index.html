@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Вычисление формул</title>
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            text-align: center;
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .formula-img {
+            display: block;
+            margin: 10px 0;
+            height: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Автор: Климов Марк Владиславович, студент группы 5130903/30303</h3>
+    <h2>Вычисление формулы</h2>
+    <label for="formulaCount">Количество формул:</label>
+    <input id="formulaCount" type="number" min="1" max="3" value="1">
+    <button id="chooseBtn">Выбрать</button>
+    <div class="result" id="result"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

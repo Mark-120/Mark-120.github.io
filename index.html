@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Практические работы</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-title">
+                    <div class="logo"></div>
+                    <div>
+                        <h1>О сайте</h1>
+                        <p>Вёрстка и прототипирование сайтов</p>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link active">О сайте</a>
+                    <a href="tasks.html" class="nav-link">Практические работы</a>
+                    <a href="flutter.html" class="nav-link">Кратко о Flutter</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section>
+            <h2>О студенте</h2>
+            <div class="card">
+                <div class="student-info">
+                    <img src="images/avatar.jpg" alt="Фото студента" class="student-photo">
+                    <div>
+                        <h3>Климов Марк Владиславович</h3>
+                        <p><strong>Направление:</strong> Прикладная информатика</p>
+                        <p><strong>Группа:</strong> 5130903/30303</p>
+                        <p><strong>Курс:</strong> 3</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Описание</h2>
+            <div class="card">
+                <div class="student-info">
+                    <p>Данный сайт был разработан в качестве курсовой работы по дисциплине "Вёрстка и прототипирование
+                        сайтов", организуемой в Санкт-Петербургском Политехническом университете имени Петра Великого, в
+                        2025 году. Он представляет из себя подобие "визитной карточки", и хранит все задания,
+                        выполненные в течение пятого семестра.
+                        До июня 2026 года, этот сайт будет активно дорабатываться, а список выполненных практических
+                        работ - пополняться.</p>
+                    <img src="images/polytech.jpg" alt="Фото Политеха" class="university-photo">
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Мои любимые мемы с котами</h2>
+            <div class="card">
+                <div class="slider-container">
+                    <div class="slider">
+                        <div class="slide active">
+                            <img id="current-cat-image" src="images/cats/cat1.jpg" alt="Разбуженный котёнок">
+                            <p>Разбуженный котёнок</p>
+                        </div>
+                    </div>
+                    <div class="slider-controls">
+                        <button class="slider-btn prev-btn">←</button>
+                        <button class="slider-btn next-btn">→</button>
+                    </div>
+                    <div class="slider-dots">
+                        <span class="dot active" data-slide="0"></span>
+                        <span class="dot" data-slide="1"></span>
+                        <span class="dot" data-slide="2"></span>
+                        <span class="dot" data-slide="3"></span>
+                        <span class="dot" data-slide="4"></span>
+                        <span class="dot" data-slide="5"></span>
+                        <span class="dot" data-slide="6"></span>
+                        <span class="dot" data-slide="7"></span>
+                        <span class="dot" data-slide="8"></span>
+                        <span class="dot" data-slide="9"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 г., Все права защищены.</p>
+            <p class="footer-text">Вёрстка и прототипирование сайтов</p>
+        </div>
+    </footer>
+
+    <script src="js/slider.js"></script>
+</body>
+
+</html>

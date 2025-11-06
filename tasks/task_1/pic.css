@@ -1,0 +1,193 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eee;
+    height: 100vh;
+}
+
+.frame {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle at 50% 70%, white, rgb(46, 68, 213));
+    border: 20px solid #3c54a5;
+    box-sizing: border-box;
+    z-index: -2;
+    border-image: linear-gradient(225deg, white, rgb(46, 68, 213)) 1;
+}
+
+.frame::before {
+    content: "";
+    top: -20px;
+    left: -20px;
+    right: -30px;
+    bottom: -30px;
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+    background:
+        radial-gradient(circle at 10px 10px, orange 8px, transparent 9px) 0 0,
+        radial-gradient(circle at 10px 10px, orange 8px, transparent 9px) 0 0,
+        radial-gradient(circle at 10px 30px, orange 8px, transparent 9px) 100% 100%,
+        radial-gradient(circle at 30px 10px, orange 8px, transparent 9px) 100% 100%;
+    background-size: 30px 30px,
+        70px 30px,
+        30px 70px,
+        70px 30px;
+    background-repeat: repeat-y,
+        repeat-x,
+        repeat-y,
+        repeat-x;
+}
+
+.mushroom {
+    position: absolute;
+    bottom: 80px;
+    left: 10px;
+}
+
+.mushroom .cap {
+    width: 120px;
+    height: 60px;
+    background: radial-gradient(circle at 60% 35%, #d3b1a3, rgb(68, 23, 21));
+    border-radius: 50% / 100% 100% 0 0;
+}
+
+.mushroom .stem {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    width: 40px;
+    height: 100px;
+    background: #eee;
+    border-color: rgba(113, 42, 40, 1);
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.mushroom.small {
+    left: 80px;
+    bottom: 40px;
+    transform: rotate(30deg) scale(0.7);
+}
+
+.grass {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: repeating-linear-gradient(135deg, green 0 10px, limegreen 10px 20px);
+    clip-path: polygon(0% 100%, 0% 90%, 10% 30%, 20% 80%, 30% 30%, 40% 80%, 50% 30%, 60% 80%, 70% 30%, 80% 80%, 90% 30%, 100% 90%, 100% 100%);
+}
+
+.bee {
+    position: absolute;
+    top: 80px;
+    left: 160px;
+    width: 50px;
+    height: 20px;
+    transform: rotate(-30deg);
+}
+
+.bee::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: gold;
+    border-radius: 50%;
+    border: 1px solid rgba(144, 143, 79, 1);
+}
+
+.bee::before {
+    content: "";
+    position: absolute;
+    left: -15px;
+    top: 3px;
+    width: 15px;
+    height: 15px;
+    background: gold;
+    border-radius: 50%;
+    border-color: rgba(144, 143, 79, 1);
+    border-width: 1px;
+    border-style: solid;
+    z-index: 1;
+}
+
+.eye {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: black;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.eye.left {
+    top: 6px;
+    left: -10px;
+}
+
+.eye.right {
+    top: 12px;
+    left: -10px;
+}
+
+.wing {
+    position: absolute;
+    width: 25px;
+    height: 15px;
+    background: rgba(107, 133, 244, 0.7);
+    border-radius: 50%;
+    border-color: rgba(40, 65, 192, 1);
+    border-width: 1px;
+    border-style: solid;
+    z-index: -2;
+}
+
+.wing.top-left {
+    top: -15px;
+    left: 5px;
+    transform: rotate(60deg);
+}
+
+.wing.top-right {
+    top: -15px;
+    right: 5px;
+    transform: rotate(-60deg);
+}
+
+.wing.bottom-left {
+    top: 20px;
+    left: 5px;
+    transform: rotate(-60deg);
+}
+
+.wing.bottom-right {
+    top: 20px;
+    right: 5px;
+    transform: rotate(60deg);
+}
+
+.cloud {
+    position: absolute;
+    left: 25px;
+    width: 200px;
+    height: 100px;
+    background: radial-gradient(circle, white 0%, rgba(113, 136, 248, 1) 100%);
+
+    -webkit-mask-image:
+        radial-gradient(ellipse 30% 40% at 30% 30%, black 100%, transparent 100%),
+        radial-gradient(ellipse 30% 40% at 60% 50%, black 100%, transparent 100%);
+    -webkit-mask-composite: destination-over;
+    mask-image:
+        radial-gradient(ellipse 30% 40% at 30% 30%, black 100%, transparent 100%),
+        radial-gradient(ellipse 30% 40% at 60% 50%, black 100%, transparent 100%);
+    mask-composite: add;
+}
