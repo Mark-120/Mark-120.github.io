@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 5 | Слова</title>
+    <link rel="stylesheet" href="../../styles.css">
+
+</head>
+
+<body class="task-page">
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-title">
+                    <div class="logo"></div>
+                    <div>
+                        <h1>Задание 5: Слова</h1>
+                        <p>Вёрстка и прототипирование сайтов</p>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <a href="../../index.html" class="nav-link">О сайте</a>
+                    <a href="../../tasks.html" class="nav-link">Практические работы</a>
+                    <a href="../../flutter.html" class="nav-link">Кратко о Flutter</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section>
+            <div class="card">
+                <h2>Описание задания</h2>
+                <p>Задание выполняется на странице Вашего сайта. Отправляется архив с именем Word_LastName_Variant. </p>
+                <p>В текстовое поле вводится произвольная строка, где слова разделены знаком тире - , например:</p>
+
+                <img style="width: 40%; height: auto;" src="images/example.png">
+
+                <p>Нужно создать, например, ассоциативный массив:</p>
+                <ol>
+                    <li>сначала идут слова со строчной буквы, потом с заглавной, отсортированные по алфавиту с ключами
+                        а1, а2 и b1, b2 …</li>
+                    <li>потом цифры по возрастанию с ключами n1, n2 …</li>
+                </ol>
+
+                <img style="width: 30%; height: auto;" src="images/array.png">
+
+                <p>Красное и синее поле можно не делать, это чтобы вы понимали, где что размещается. Все блоки, которые
+                    были перетащены, можно двигать в пределах своего поля.</p>
+
+                <h2>Вариант 3</h2>
+
+                <p>После нажатия на кнопку Разобрать, слова размещаются в блоке 2 в элементах c закругленным краем.</p>
+                <img style="width: 40%; height: auto;" src="images/variant_3_1.png">
+                <p>Каждый из вновь созданных элементов можно перетащить в синий блок 1 в любое место, можно переставлять
+                    их местами, каждый элемент становится случайного цвета. При нажатии на элемент в синем блоке 1, в
+                    красном поле блока 3 отображается слово из нажатого элемента. Можно переместить элемент из поля 1
+                    обратно в поле 2 и он встанет на прежнее место, в отсортированном порядке, с первоначальным цветом.
+                </p>
+                <img style="width: 40%; height: auto;" src="images/variant_3_2.png">
+            </div>
+
+            <div class="card">
+                <h2>Выполненная работа</h2>
+                <p>Ниже представлено выполненное задание:</p>
+                <iframe src="words/index.html" width="100%" height="800px" frameborder="0"></iframe>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 г., Все права защищены.</p>
+            <p class="footer-text">Вёрстка и прототипирование сайтов</p>
+        </div>
+    </footer>
+</body>
+
+</html>

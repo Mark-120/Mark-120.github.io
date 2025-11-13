@@ -22,23 +22,32 @@ body {
 .logo {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #7c3aed 0%, #6b21a8 100%);
-    border-radius: 12px;
+    background: radial-gradient(circle at center, #764ba2 0%, #667eea 100%);
+    border-radius: 8px;
     position: relative;
     margin-right: 15px;
-    box-shadow: 0 4px 8px rgba(123, 58, 237, 0.3);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.logo::before {
+    content: "🐱";
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
 }
 
 .logo::after {
-    content: "</>";
+    content: "console.log();";
     position: absolute;
-    top: 50%;
+    bottom: 8px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     color: white;
-    font-weight: bold;
-    font-size: 18px;
+    font-size: 8px;
     font-family: monospace;
+    white-space: nowrap;
 }
 
 .logo-title {
