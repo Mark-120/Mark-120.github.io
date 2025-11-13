@@ -39,7 +39,7 @@ body {
 }
 
 .logo::after {
-    content: "console.log();";
+    content: "Бип буп";
     position: absolute;
     bottom: 8px;
     left: 50%;
