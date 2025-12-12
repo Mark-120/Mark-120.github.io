@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск квадрата - Игра</title>
+    <link rel="stylesheet" href="../../../styles.css">
+    <link rel="stylesheet" href="square_game.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-title">
+                    <div class="logo"></div>
+                    <div>
+                        <h1>Курсовая работа </h1>
+                        <p>Вёрстка и прототипирование сайтов</p>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <a href="../../../index.html" class="nav-link">О сайте</a>
+                    <a href="../../../tasks.html" class="nav-link">Практические работы</a>
+                    <a href="../../../flutter.html" class="nav-link">Кратко о Flutter</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="container">
+        <div class="game-container">
+            <div class="game-header">
+                <div class="header-controls">
+                    <button class="back-btn" onclick="window.location.href='../main_page/index.html'">
+                        ← Назад
+                    </button>
+                    <button class="restart-btn" onclick="restartGame()">
+                        ↻ Перезапуск
+                    </button>
+                </div>
+
+                <div class="game-stats">
+                    <div class="timer">
+                        <span>Время:</span>
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div class="attempts">
+                        <span>Неправильно:</span>
+                        <span id="wrong-attempts">0/3</span>
+                    </div>
+                    <div class="rotations">
+                        <span>Повороты:</span>
+                        <span id="rotation-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="search-area">
+                    <h2>Найдите соответствующий квадрат:</h2>
+                    <div class="error-message" id="error-message"></div>
+                    <div class="squares-grid" id="squares-container"></div>
+                </div>
+
+                <div class="sample-area">
+                    <h2>Образец</h2>
+                    <div class="sample-square" id="sample-square"></div>
+                    <button class="rotate-btn" onclick="rotateSample()">
+                        Повернуть на 90°
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальные окна -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <div class="modal win-modal" id="win-modal">
+        <div class="modal-header">
+            <h2>Ура! Вы победили! 🎉</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <div class="stats">
+                <p><strong>Время:</strong> <span id="win-time">00:00</span></p>
+                <p><strong>Попытки:</strong> <span id="win-attempts">0</span></p>
+                <p><strong>Повороты:</strong> <span id="win-hints">0</span></p>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="restartGame()">Сыграть снова</button>
+                <button class="modal-btn" onclick="window.location.href='../main_page/index.html'">
+                    В меню
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal lose-modal" id="lose-modal">
+        <div class="modal-header">
+            <h2>О нет! Вы проиграли :(</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Правильный ответ:</p>
+            <div class="correct-answer" id="correct-answer"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="restartGame()">Попробовать снова</button>
+                <button class="modal-btn" onclick="window.location.href='../main_page/index.html'">
+                    Другой уровень
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 г., Все права защищены.</p>
+            <p class="footer-text">Вёрстка и прототипирование сайтов</p>
+        </div>
+    </footer>
+
+    <script src="square_game.js"></script>
+</body>
+
+</html>

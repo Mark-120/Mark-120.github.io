@@ -1,0 +1,53 @@
+.game-section {
+    padding: 20px 0;
+}
+
+.levels-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.level-item {
+    background: white;
+    border: 2px solid #e9d5ff;
+    border-radius: 5px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.level-item:hover {
+    background: #f8f5ff;
+    border-color: #7c3aed;
+    transform: translateX(5px);
+}
+
+.level-item.active {
+    background: #7c3aed;
+    color: white;
+    border-color: #7c3aed;
+}
+
+.play-btn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.play-btn:hover {
+    background: #6b21a8;
+}
