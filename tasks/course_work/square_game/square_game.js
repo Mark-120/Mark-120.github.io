@@ -4,8 +4,8 @@ const LEVELS = {
         size: 3,
         colors: 2,
         squares: 6,
-        n: 200,  // цена ошибки
-        m: 100   // цена поворота
+        n: 200,
+        m: 100
     },
     medium: {
         name: 'Средний',
@@ -54,23 +54,17 @@ let gameState = {
     currentLevelData: null
 };
 
-// DOM элементы
 let timerElement, wrongAttemptsElement, rotationsElement;
 let wrongAttemptsCurrentElement, scoreElement, levelInfoElement;
 let errorMessageElement, squaresContainer, sampleContainer;
+
 let isGameOver = false;
 
 document.addEventListener('DOMContentLoaded', function () {
     if (document.querySelector('.game-area')) {
-        // Инициализация элементов
         initElements();
-
         startNewGame();
-
-        // Обновление информации о пользователе
         updateUserInfo();
-
-        // Инициализация модальных окон
         initModals();
     }
 });
@@ -97,17 +91,9 @@ function updateUserInfo() {
     }
 }
 
-function changeUsername() {
-    if (confirm('Сменить имя пользователя? Вы будете перенаправлены в меню.')) {
-        window.location.href = '../main_page/index.html';
-    }
-}
-
-
 function startNewGame() {
     isGameOver = false;
     resetGameState();
-    saveGameState();
     updateGameStats();
     generateLevel();
     startTimer();
@@ -141,25 +127,9 @@ function resetGameState() {
     };
 }
 
-function saveGameState() {
-    localStorage.setItem('squareGameCurrentGame', JSON.stringify(gameState));
-}
-
-function saveProgress() {
-    const progress = {
-        currentDifficulty: gameState.currentDifficulty,
-        levelIndex: gameState.levelIndex,
-        totalProgress: gameState.totalProgress,
-        lastPlayed: Date.now()
-    };
-    localStorage.setItem('squareGameProgress', JSON.stringify(progress));
-}
-
 function updateGameStats() {
-    // Обновление таймера
     updateTimer();
 
-    // Обновление статистики
     wrongAttemptsElement.textContent = gameState.wrongAttempts;
     rotationsElement.textContent = gameState.rotations;
 
@@ -205,11 +175,9 @@ function updateTimer() {
 
 function startTimer() {
     clearInterval(gameState.timerInterval);
-
     gameState.timerInterval = setInterval(() => {
         updateTimer();
 
-        // Проверка на отрицательный счет
         if (gameState.score <= 0) {
             gameOver('score');
         }
@@ -219,11 +187,7 @@ function startTimer() {
 function generateLevel() {
     gameState.currentLevelData = LEVELS[gameState.currentDifficulty];
     const level = gameState.currentLevelData;
-
-    // Сброс ошибок текущего уровня
     gameState.wrongAttemptsCurrentLevel = 0;
-
-    // Генерация правильного квадрата
     let square;
     do {
         square = generateRandomSquare(level.size, level.colors);
@@ -238,37 +202,28 @@ function generateLevel() {
         changedSquare = rotate90(changedSquare);
     }
 
-    // Генерация неправильных квадратов
     const wrongSquares = generateWrongSquares(changedSquare, level.squares - 1, level.size);
 
-    // Смешивание квадратов
     let squares = [changedSquare, ...wrongSquares];
     shuffleArray(squares);
 
-    // Отображение образца
     sampleContainer.innerHTML = '';
     sampleContainer.appendChild(createSquareElement(square, true));
 
-    // Отображение квадратов для выбора
     squaresContainer.innerHTML = '';
     squares.forEach((sq, index) => {
         const isCorrect = isMatch(sq, square);
         const squareElement = createSquareElement(sq);
-
         if (isCorrect) {
             squareElement.dataset.correct = 'true';
         }
-
         squareElement.addEventListener('click', () => handleSquareClick(isCorrect, squareElement));
         squaresContainer.appendChild(squareElement);
     });
 
-    // Обновление статистики
     updateGameStats();
-    saveGameState();
 }
 
-// Функции для работы с квадратами (оставить из предыдущей версии)
 function generateRandomSquare(size, numColors) {
     const square = [];
     for (let i = 0; i < size; i++) {
@@ -284,7 +239,6 @@ function generateRandomSquare(size, numColors) {
 function hasAtLeastTwoColors(square) {
     if (!square || square.length === 0) return false;
     const firstColor = square[0][0];
-
     for (let i = 0; i < square.length; i++) {
         for (let j = 0; j < square[i].length; j++) {
             if (i === 0 && j === 0) continue;
@@ -297,7 +251,6 @@ function hasAtLeastTwoColors(square) {
 function rotate90(matrix) {
     const size = matrix.length;
     const result = Array.from({ length: size }, () => Array(size).fill(0));
-
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
             result[j][size - 1 - i] = matrix[i][j];
@@ -308,7 +261,6 @@ function rotate90(matrix) {
 
 function squaresEqual(square1, square2) {
     if (square1.length !== square2.length) return false;
-
     for (let i = 0; i < square1.length; i++) {
         for (let j = 0; j < square1[i].length; j++) {
             if (square1[i][j] !== square2[i][j]) return false;
@@ -319,12 +271,10 @@ function squaresEqual(square1, square2) {
 
 function isMatch(square1, square2) {
     let current = square2;
-
     for (let rotation = 0; rotation < 4; rotation++) {
         if (squaresEqual(square1, current)) return true;
         current = rotate90(current);
     }
-
     return false;
 }
 
@@ -334,24 +284,17 @@ function generateWrongSquares(correctSquare, count, minDifferences) {
 
     while (wrongSquares.length < count) {
         const wrongSquare = [];
-
-        // Создаем копию с изменениями
         for (let i = 0; i < size; i++) {
             wrongSquare.push([...correctSquare[i]]);
         }
-
-        // Вносим случайные изменения
         const changes = Math.max(minDifferences, 2);
         const positions = [];
-
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 positions.push({ i, j });
             }
         }
-
         shuffleArray(positions);
-
         for (let c = 0; c < changes && c < positions.length; c++) {
             const { i, j } = positions[c];
             const numColors = gameState.currentLevelData.colors;
@@ -363,10 +306,8 @@ function generateWrongSquares(correctSquare, count, minDifferences) {
 
             wrongSquare[i][j] = newColor;
         }
-
-        // Проверяем, что квадрат не совпадает с правильным
         if (!isMatch(correctSquare, wrongSquare)) {
-            // Проверяем уникальность среди уже созданных
+
             let isUnique = true;
             for (const existing of wrongSquares) {
                 if (isMatch(existing, wrongSquare)) {
@@ -408,110 +349,75 @@ function createSquareElement(square, isSample = false) {
 
 function handleSquareClick(isCorrect, element) {
     if (!gameState.gameStarted || isGameOver) return;
-
     if (isCorrect) {
-        // Правильный ответ
         handleCorrectAnswer();
     } else {
-        // Неправильный ответ
         handleWrongAnswer(element);
     }
 }
 
 function handleCorrectAnswer() {
-    // Увеличиваем прогресс
     gameState.totalProgress++;
     gameState.levelIndex++;
-
-    // Показываем сообщение
     showMessage('Правильно!', 'success');
 
-    // Проверяем, завершен ли текущий уровень сложности
     if (gameState.levelIndex >= LEVELS_PER_DIFFICULTY) {
         gameState.levelIndex = 0;
         const currentIndex = LEVEL_ORDER.indexOf(gameState.currentDifficulty);
-
         if (currentIndex < LEVEL_ORDER.length - 1) {
-            // Переходим на следующую сложность
             gameState.currentDifficulty = LEVEL_ORDER[currentIndex + 1];
         } else {
-            // Игра завершена!
             gameOver('win');
             return;
         }
     }
-
-    // Генерируем следующий уровень
     setTimeout(() => {
         generateLevel();
     }, 1000);
 
-    saveGameState();
-    saveProgress();
 }
 
 function handleWrongAnswer(element) {
-    // Увеличиваем счетчики ошибок
     gameState.wrongAttempts++;
     gameState.wrongAttemptsCurrentLevel++;
-
-    // Вычитаем баллы
     const level = gameState.currentLevelData;
     gameState.score = Math.max(0, gameState.score - level.n);
-
-    // Обновляем статистику
     updateGameStats();
-
-    // Показываем ошибку
     element.style.borderColor = '#ef4444';
     element.style.boxShadow = '0 0 10px #ef4444';
-
     showMessage('Неправильный квадрат!', 'error');
-
-    // Проверяем на проигрыш
     if (gameState.wrongAttemptsCurrentLevel >= 3) {
         gameOver('attempts');
         return;
     }
-
     if (gameState.score <= 0) {
         gameOver('score');
         return;
     }
-
-    // Возвращаем нормальный вид через 1 секунду
     setTimeout(() => {
         element.style.borderColor = '';
         element.style.boxShadow = '';
     }, 1000);
-
-    saveGameState();
 }
 
 function rotateSample() {
     if (!gameState.gameStarted || isGameOver) return;
 
-    // Поворачиваем образец
     gameState.correctSquare = rotate90(gameState.correctSquare);
     gameState.rotations++;
 
-    // Вычитаем баллы за поворот
     const level = gameState.currentLevelData;
     gameState.score = Math.max(0, gameState.score - level.m);
 
-    // Обновляем отображение
     sampleContainer.innerHTML = '';
     sampleContainer.appendChild(createSquareElement(gameState.correctSquare, true));
 
-    // Обновляем статистику
     updateGameStats();
 
-    // Проверяем на проигрыш
     if (gameState.score <= 0) {
         gameOver('score');
     }
 
-    saveGameState();
 }
 
 function showMessage(text, type) {
@@ -541,7 +447,7 @@ function gameOver(reason) {
     const timeSpent = Date.now() - gameState.startTime;
 
     if (reason === 'win') {
-        // Победа - все уровни пройдены
+
         showWinModal(timeSpent);
 
         // Сохраняем в рейтинг
@@ -553,18 +459,10 @@ function gameOver(reason) {
             score: gameState.score
         };
 
-        // Сохраняем последний результат
-        localStorage.setItem('squareGameLastResult', JSON.stringify(gameData));
-
-        // Добавляем в рейтинг
         addToRating(gameData);
 
-        // Очищаем текущую игру
-        localStorage.removeItem('squareGameCurrentGame');
-        localStorage.removeItem('squareGameProgress');
-
     } else {
-        // Проигрыш
+
         let message = '';
         switch (reason) {
             case 'attempts':
@@ -578,13 +476,9 @@ function gameOver(reason) {
                 break;
         }
 
-        // Подсвечиваем правильный квадрат при проигрыше
         highlightCorrectSquare();
 
         showLoseModal(timeSpent, message);
-
-        // Очищаем текущую игру
-        localStorage.removeItem('squareGameCurrentGame');
     }
 }
 
@@ -592,11 +486,10 @@ function highlightCorrectSquare() {
     const squares = document.querySelectorAll('#squares-container .square');
     squares.forEach((square, index) => {
         if (square.dataset.correct === 'true') {
-            // Добавляем зелёную обводку
+
             square.style.border = '3px solid #10b981';
             square.style.boxShadow = '0 0 15px #10b981';
 
-            // Добавляем номер квадрата
             const numberIndicator = document.createElement('div');
             numberIndicator.className = 'correct-number';
             numberIndicator.textContent = `✓ ${index + 1}`;
@@ -627,12 +520,6 @@ function initModals() {
     if (overlay) {
         overlay.addEventListener('click', hideModal);
     }
-
-    // Инициализация модального окна для смены имени
-    const nameOverlay = document.getElementById('name-modal-overlay');
-    if (nameOverlay) {
-        nameOverlay.addEventListener('click', hideModal);
-    }
 }
 
 function showWinModal(timeSpent) {
@@ -659,13 +546,6 @@ function showLoseModal(timeSpent, reason) {
     document.getElementById('lose-score').textContent = gameState.score;
     document.getElementById('lose-reason').textContent = reason;
 
-    // // Показываем правильный ответ
-    // const correctAnswerDiv = document.getElementById('correct-answer');
-    // correctAnswerDiv.innerHTML = '';
-    // if (gameState.correctSquare) {
-    //     correctAnswerDiv.appendChild(createSquareElement(gameState.correctSquare));
-    // }
-
     modal.classList.add('show');
     overlay.style.display = 'block';
 }
@@ -684,23 +564,18 @@ function formatTime(milliseconds) {
 }
 
 function restartGame() {
-    hideModal(); // Сначала скрываем наше модальное окно
-    isGameOver = false; // Сбрасываем флаг завершения игры
-    localStorage.removeItem('squareGameCurrentGame');
-    localStorage.removeItem('squareGameProgress');
+    hideModal();
+    isGameOver = false;
     startNewGame();
 }
 
 function goBack() {
-    hideModal(); // Сначала скрываем наше модальное окно
-    isGameOver = false; // Сбрасываем флаг завершения игры
-    localStorage.removeItem('squareGameCurrentGame');
-    localStorage.removeItem('squareGameProgress');
+    hideModal();
+    isGameOver = false;
+
     window.location.href = '../main_page/index.html';
 }
 
-
-// Функции для рейтинга
 function addToRating(gameData) {
     const rating = JSON.parse(localStorage.getItem('squareGameRating') || '[]');
     rating.push(gameData);
@@ -727,11 +602,9 @@ function showRestartModal() {
     return false;
 }
 
-// И добавим в window объект
+// Глобальные функции
 window.showExitModal = showExitModal;
 window.showRestartModal = showRestartModal;
-
-// Глобальные функции
 window.restartGame = restartGame;
 window.rotateSample = rotateSample;
 window.hideModal = hideModal;

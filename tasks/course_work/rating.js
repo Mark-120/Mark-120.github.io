@@ -2,27 +2,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     updateUserInfo();
     loadRating();
-
-    // Инициализация модальных окон
-    const overlay = document.getElementById('name-modal-overlay');
-    if (overlay) {
-        overlay.addEventListener('click', hideNameModal);
-    }
-
-    // Проверка имени при загрузке
-    if (!localStorage.getItem('squareGameUsername')) {
-        setTimeout(showNameModal, 500);
-    }
 });
 
 // Общие функции для работы с пользователем
 function getUsername() {
     return localStorage.getItem('squareGameUsername') || 'Игрок';
-}
-
-function setUsername(name) {
-    localStorage.setItem('squareGameUsername', name);
-    updateUserInfo();
 }
 
 function updateUserInfo() {
@@ -32,31 +16,6 @@ function updateUserInfo() {
         userInfo.innerHTML = `
             <span class="username">${username}</span>
         `;
-    }
-}
-
-function showNameModal() {
-    const modal = document.getElementById('name-modal');
-    const overlay = document.getElementById('name-modal-overlay');
-    const input = document.getElementById('new-username');
-
-    input.value = getUsername();
-    input.focus();
-
-    modal.classList.add('show');
-    overlay.style.display = 'block';
-}
-
-function hideNameModal() {
-    document.getElementById('name-modal').classList.remove('show');
-    document.getElementById('name-modal-overlay').style.display = 'none';
-}
-
-function saveNewUsername() {
-    const newName = document.getElementById('new-username').value.trim();
-    if (newName && newName.length > 0) {
-        setUsername(newName);
-        hideNameModal();
     }
 }
 
@@ -103,21 +62,6 @@ function formatTime(milliseconds) {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-function addToRating(gameData) {
-    const rating = JSON.parse(localStorage.getItem('squareGameRating') || '[]');
-
-    rating.push({
-        username: gameData.username,
-        time: gameData.time,
-        wrongAttempts: gameData.wrongAttempts,
-        rotations: gameData.rotations,
-        score: gameData.score,
-        date: new Date().toISOString()
-    });
-
-    localStorage.setItem('squareGameRating', JSON.stringify(rating));
-}
-
 function clearRating() {
     if (confirm('Вы уверены, что хотите очистить весь рейтинг? Это действие нельзя отменить.')) {
         localStorage.removeItem('squareGameRating');
@@ -125,7 +69,4 @@ function clearRating() {
     }
 }
 
-window.showNameModal = showNameModal;
-window.hideNameModal = hideNameModal;
-window.saveNewUsername = saveNewUsername;
 window.clearRating = clearRating;
