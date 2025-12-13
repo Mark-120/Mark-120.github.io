@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,23 +9,22 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .user-info {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
             display: flex;
             align-items: center;
+            max-width: fit-content;
             gap: 10px;
             background: white;
             padding: 8px 15px;
             border-radius: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        
+
         .username {
             font-weight: bold;
             color: #7c3aed;
         }
-        
+
+
         .change-name-btn {
             background: #e9d5ff;
             color: #7c3aed;
@@ -34,13 +34,14 @@
             cursor: pointer;
             font-size: 12px;
         }
-        
+
         .change-name-btn:hover {
             background: #7c3aed;
             color: white;
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -52,6 +53,9 @@
                     <a href="index.html" class="nav-link">Меню игры</a>
                     <a href="../rating.html" class="nav-link">Рейтинг игроков</a>
                 </nav>
+                <div class="user-info" id="user-info">
+                    <!-- Заполнится через JS -->
+                </div>
             </div>
         </div>
     </header>
@@ -60,10 +64,8 @@
         <section class="game-section">
             <div class="card">
                 <h1>Игра "Распознание квадратов"</h1>
-                
-                <div class="user-info" id="user-info">
-                    <!-- Заполнится через JS -->
-                </div>
+
+
 
                 <div>
                     <h2>Правила игры</h2>
@@ -73,18 +75,13 @@
                         <li>Среди предложенных квадратов ровно один совпадает с образцом</li>
                         <li>У вас есть 3 попытки на каждом уровне сложности</li>
                         <li>Всего 12 уровней (по 3 на каждой сложности)</li>
-                        <li>Общее время на прохождение: 5 минут</li>
+                        <li>Общее время на прохождение: 10 минут</li>
                         <li>Начальный балл: 1200 (теряется за ошибки и повороты)</li>
                     </ul>
                 </div>
 
-                <div class="progress-info">
-                    <h2>Ваш рекорд</h2>
-                    <p id="progress-text">Новая игра</p>
-                </div>
-
                 <button class="play-btn" id="play-btn">Пройти игру</button>
-                
+
                 <div class="recent-results" id="recent-results" style="display: none;">
                     <h3>Последний результат:</h3>
                     <div id="last-result"></div>
@@ -110,4 +107,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>

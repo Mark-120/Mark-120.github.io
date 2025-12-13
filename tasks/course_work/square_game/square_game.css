@@ -315,3 +315,47 @@
     background: #e9d5ff;
     color: #7c3aed;
 }
+
+/* Стили для правильного квадрата при проигрыше */
+.correct-hint {
+    text-align: center;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f0fdf4;
+    border-radius: 5px;
+    border: 1px solid #bbf7d0;
+}
+
+.correct-example {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Зелёная обводка для правильного квадрата */
+.square.correct-highlight {
+    border: 3px solid #10b981 !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5) !important;
+}
+
+/* Индикатор номера правильного квадрата */
+.correct-number {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #10b981;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

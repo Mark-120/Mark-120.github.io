@@ -64,10 +64,10 @@
         <div class="game-container">
             <div class="game-header">
                 <div class="header-controls">
-                    <button class="back-btn" onclick="showExitModal()">
+                    <button class="back-btn" onclick="return showExitModal()">
                         ← Назад
                     </button>
-                    <button class="restart-btn" onclick="showRestartModal()">
+                    <button class="restart-btn" onclick="return showRestartModal()">
                         ↻ Перезапуск
                     </button>
                 </div>
@@ -176,8 +176,15 @@
                 <p><strong>Баллы:</strong> <span id="lose-score">0</span></p>
             </div>
 
-            <p>Правильный ответ:</p>
-            <div class="correct-answer" id="correct-answer"></div>
+            <div class="correct-hint">
+                <div class="square" style="display: inline-block; position: relative; margin: 10px;">
+                    <div class="correct-number"
+                        style="position: absolute; top: -10px; right: -10px; background: #10b981; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px;">
+                        ✓ 3
+                    </div>
+                </div>
+                <p><small>Правильный ответ отмечен зелёной обводкой и номером сверху справа</small></p>
+            </div>
 
             <div class="modal-buttons">
                 <button class="modal-btn primary" onclick="restartGame()">Начать заново</button>
@@ -233,13 +240,6 @@
         </div>
     </div>
     <div class="modal-overlay" id="name-modal-overlay"></div>
-
-    <footer>
-        <div class="container">
-            <p>© 2025 г., Все права защищены.</p>
-            <p class="footer-text">Вёрстка и прототипирование сайтов</p>
-        </div>
-    </footer>
 
     <script src="square_game.js"></script>
 </body>

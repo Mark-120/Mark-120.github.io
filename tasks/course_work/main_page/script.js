@@ -7,8 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
         showNameModal();
     }
 
-    // Загружаем прогресс
-    loadProgress();
 
     // Обработчик кнопки "Пройти игру"
     document.getElementById('play-btn').addEventListener('click', function () {
@@ -17,9 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
             showNameModal();
             return;
         }
-
-        // Сбрасываем прогресс при начале новой игры
-        resetGameProgress();
         window.location.href = `../square_game/square_game.html`;
     });
 });
@@ -85,50 +80,10 @@ function saveNewUsername() {
     }
 }
 
-// Функции для прогресса
-function loadProgress() {
-    const progress = JSON.parse(localStorage.getItem('squareGameProgress'));
-    const progressText = document.getElementById('progress-text');
-    const recentResults = document.getElementById('recent-results');
-    const lastResult = document.getElementById('last-result');
-
-    if (progress) {
-        const currentLevel = progress.currentLevel || 'easy';
-        const levelIndex = progress.levelIndex || 0;
-        const levelNames = {
-            'easy': 'Лёгкий',
-            'medium': 'Средний',
-            'hard': 'Сложный',
-            'expert': 'Эксперт'
-        };
-
-        const totalProgress = progress.totalProgress || 0;
-        progressText.textContent = `Прогресс: ${totalProgress}/12 уровней`;
-
-        // Показываем последний результат
-        const lastGame = JSON.parse(localStorage.getItem('squareGameLastResult'));
-        if (lastGame) {
-            recentResults.style.display = 'block';
-            lastResult.innerHTML = `
-                <p>Баллы: <strong>${lastGame.score}</strong></p>
-                <p>Время: ${formatTime(lastGame.time)}</p>
-                <p>Уровень: ${levelNames[lastGame.level] || 'Неизвестно'}</p>
-            `;
-        }
-    } else {
-        progressText.textContent = 'Новая игра';
-    }
-}
-
 function formatTime(milliseconds) {
     const minutes = Math.floor(milliseconds / 60000);
     const seconds = Math.floor((milliseconds % 60000) / 1000);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-function resetGameProgress() {
-    localStorage.removeItem('squareGameProgress');
-    localStorage.removeItem('squareGameCurrentGame');
 }
 
 // Глобальные функции

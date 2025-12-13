@@ -36,7 +36,7 @@ const LEVELS = {
 const LEVEL_ORDER = ['easy', 'medium', 'hard', 'expert'];
 const LEVELS_PER_DIFFICULTY = 3;
 const TOTAL_LEVELS = LEVEL_ORDER.length * LEVELS_PER_DIFFICULTY;
-const TOTAL_TIME = 5 * 60 * 1000; // 5 минут в миллисекундах
+const TOTAL_TIME = 10 * 60 * 1000;
 const START_SCORE = 1200;
 
 let gameState = {
@@ -58,14 +58,14 @@ let gameState = {
 let timerElement, wrongAttemptsElement, rotationsElement;
 let wrongAttemptsCurrentElement, scoreElement, levelInfoElement;
 let errorMessageElement, squaresContainer, sampleContainer;
+let isGameOver = false;
 
 document.addEventListener('DOMContentLoaded', function () {
     if (document.querySelector('.game-area')) {
         // Инициализация элементов
         initElements();
 
-        // Загрузка сохраненной игры или начало новой
-        loadGame();
+        startNewGame();
 
         // Обновление информации о пользователе
         updateUserInfo();
@@ -93,7 +93,6 @@ function updateUserInfo() {
         const username = localStorage.getItem('squareGameUsername') || 'Игрок';
         userInfo.innerHTML = `
             <span class="username">${username}</span>
-            <button class="change-name-btn" onclick="changeUsername()">Сменить имя</button>
         `;
     }
 }
@@ -104,28 +103,25 @@ function changeUsername() {
     }
 }
 
-function loadGame() {
-    const savedGame = JSON.parse(localStorage.getItem('squareGameCurrentGame'));
-
-    if (savedGame && savedGame.gameStarted) {
-        // Продолжаем сохраненную игру
-        gameState = savedGame;
-        updateGameStats();
-        startTimer();
-        generateLevel();
-    } else {
-        // Начинаем новую игру
-        startNewGame();
-    }
-}
 
 function startNewGame() {
+    isGameOver = false;
     resetGameState();
     saveGameState();
     updateGameStats();
     generateLevel();
     startTimer();
     gameState.gameStarted = true;
+
+    const squares = document.querySelectorAll('#squares-container .square');
+    squares.forEach(square => {
+        square.style.border = '';
+        square.style.boxShadow = '';
+        const numberIndicator = square.querySelector('.correct-number');
+        if (numberIndicator) {
+            numberIndicator.remove();
+        }
+    });
 }
 
 function resetGameState() {
@@ -191,7 +187,7 @@ function updateGameStats() {
 }
 
 function updateTimer() {
-    if (!gameState.startTime) return;
+    if (!gameState.startTime || isGameOver) return;
 
     const elapsed = Date.now() - gameState.startTime;
     const remaining = Math.max(0, TOTAL_TIME - elapsed);
@@ -411,7 +407,7 @@ function createSquareElement(square, isSample = false) {
 }
 
 function handleSquareClick(isCorrect, element) {
-    if (!gameState.gameStarted) return;
+    if (!gameState.gameStarted || isGameOver) return;
 
     if (isCorrect) {
         // Правильный ответ
@@ -493,7 +489,7 @@ function handleWrongAnswer(element) {
 }
 
 function rotateSample() {
-    if (!gameState.gameStarted) return;
+    if (!gameState.gameStarted || isGameOver) return;
 
     // Поворачиваем образец
     gameState.correctSquare = rotate90(gameState.correctSquare);
@@ -537,6 +533,8 @@ function shuffleArray(array) {
 }
 
 function gameOver(reason) {
+    if (isGameOver) return;
+    isGameOver = true;
     clearInterval(gameState.timerInterval);
     gameState.gameStarted = false;
 
@@ -580,11 +578,48 @@ function gameOver(reason) {
                 break;
         }
 
+        // Подсвечиваем правильный квадрат при проигрыше
+        highlightCorrectSquare();
+
         showLoseModal(timeSpent, message);
 
         // Очищаем текущую игру
         localStorage.removeItem('squareGameCurrentGame');
     }
+}
+
+function highlightCorrectSquare() {
+    const squares = document.querySelectorAll('#squares-container .square');
+    squares.forEach((square, index) => {
+        if (square.dataset.correct === 'true') {
+            // Добавляем зелёную обводку
+            square.style.border = '3px solid #10b981';
+            square.style.boxShadow = '0 0 15px #10b981';
+
+            // Добавляем номер квадрата
+            const numberIndicator = document.createElement('div');
+            numberIndicator.className = 'correct-number';
+            numberIndicator.textContent = `✓ ${index + 1}`;
+            numberIndicator.style.cssText = `
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                background: #10b981;
+                color: white;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 12px;
+                z-index: 10;
+            `;
+            square.style.position = 'relative';
+            square.appendChild(numberIndicator);
+        }
+    });
 }
 
 function initModals() {
@@ -624,12 +659,12 @@ function showLoseModal(timeSpent, reason) {
     document.getElementById('lose-score').textContent = gameState.score;
     document.getElementById('lose-reason').textContent = reason;
 
-    // Показываем правильный ответ
-    const correctAnswerDiv = document.getElementById('correct-answer');
-    correctAnswerDiv.innerHTML = '';
-    if (gameState.correctSquare) {
-        correctAnswerDiv.appendChild(createSquareElement(gameState.correctSquare));
-    }
+    // // Показываем правильный ответ
+    // const correctAnswerDiv = document.getElementById('correct-answer');
+    // correctAnswerDiv.innerHTML = '';
+    // if (gameState.correctSquare) {
+    //     correctAnswerDiv.appendChild(createSquareElement(gameState.correctSquare));
+    // }
 
     modal.classList.add('show');
     overlay.style.display = 'block';
@@ -649,21 +684,21 @@ function formatTime(milliseconds) {
 }
 
 function restartGame() {
-    if (confirm('Вы уверены, что хотите начать заново? Весь прогресс будет потерян!')) {
-        localStorage.removeItem('squareGameCurrentGame');
-        localStorage.removeItem('squareGameProgress');
-        hideModal();
-        startNewGame();
-    }
+    hideModal(); // Сначала скрываем наше модальное окно
+    isGameOver = false; // Сбрасываем флаг завершения игры
+    localStorage.removeItem('squareGameCurrentGame');
+    localStorage.removeItem('squareGameProgress');
+    startNewGame();
 }
 
 function goBack() {
-    if (confirm('Вы уверены, что хотите выйти? Весь прогресс будет потерян!')) {
-        localStorage.removeItem('squareGameCurrentGame');
-        localStorage.removeItem('squareGameProgress');
-        window.location.href = '../main_page/index.html';
-    }
+    hideModal(); // Сначала скрываем наше модальное окно
+    isGameOver = false; // Сбрасываем флаг завершения игры
+    localStorage.removeItem('squareGameCurrentGame');
+    localStorage.removeItem('squareGameProgress');
+    window.location.href = '../main_page/index.html';
 }
+
 
 // Функции для рейтинга
 function addToRating(gameData) {
@@ -678,6 +713,8 @@ function showExitModal() {
 
     modal.classList.add('show');
     overlay.style.display = 'block';
+
+    return false;
 }
 
 function showRestartModal() {
@@ -686,6 +723,8 @@ function showRestartModal() {
 
     modal.classList.add('show');
     overlay.style.display = 'block';
+
+    return false;
 }
 
 // И добавим в window объект

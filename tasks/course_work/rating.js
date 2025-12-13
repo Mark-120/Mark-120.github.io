@@ -1,3 +1,20 @@
+// Инициализация
+document.addEventListener('DOMContentLoaded', function () {
+    updateUserInfo();
+    loadRating();
+
+    // Инициализация модальных окон
+    const overlay = document.getElementById('name-modal-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', hideNameModal);
+    }
+
+    // Проверка имени при загрузке
+    if (!localStorage.getItem('squareGameUsername')) {
+        setTimeout(showNameModal, 500);
+    }
+});
+
 // Общие функции для работы с пользователем
 function getUsername() {
     return localStorage.getItem('squareGameUsername') || 'Игрок';
@@ -14,7 +31,6 @@ function updateUserInfo() {
         const username = getUsername();
         userInfo.innerHTML = `
             <span class="username">${username}</span>
-            <button class="change-name-btn" onclick="showNameModal()">Сменить имя</button>
         `;
     }
 }
@@ -63,13 +79,11 @@ function loadRating() {
 
     let html = '';
     rating.forEach((player, index) => {
-        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
 
         html += `
             <tr>
                 <td>
                     ${index + 1}
-                    ${medal ? `<span class="medal">${medal}</span>` : ''}
                 </td>
                 <td>${player.username}</td>
                 <td>${formatTime(player.time)}</td>
@@ -110,23 +124,6 @@ function clearRating() {
         loadRating();
     }
 }
-
-// Инициализация
-document.addEventListener('DOMContentLoaded', function () {
-    updateUserInfo();
-    loadRating();
-
-    // Инициализация модальных окон
-    const overlay = document.getElementById('name-modal-overlay');
-    if (overlay) {
-        overlay.addEventListener('click', hideNameModal);
-    }
-
-    // Проверка имени при загрузке
-    if (!localStorage.getItem('squareGameUsername')) {
-        setTimeout(showNameModal, 500);
-    }
-});
 
 window.showNameModal = showNameModal;
 window.hideNameModal = hideNameModal;
