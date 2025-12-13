@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рейтинг игроков - Распознание квадратов</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="main_page/style.css">
+    <style>
+        .rating-container {
+            padding: 20px 0;
+        }
+
+        .rating-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .rating-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .rating-table th {
+            background: #7c3aed;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .rating-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9d5ff;
+        }
+
+        .rating-table tr:hover {
+            background: #f8f5ff;
+        }
+
+        .rating-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .medal {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .gold {
+            background: gold;
+            color: #000;
+        }
+
+        .silver {
+            background: silver;
+            color: #000;
+        }
+
+        .bronze {
+            background: #cd7f32;
+            color: #000;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .actions button:hover {
+            background: #6b21a8;
+        }
+
+        .clear-rating {
+            background: #ef4444 !important;
+        }
+
+        .clear-rating:hover {
+            background: #dc2626 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-title">
+                    <h1>Игра "Распознание квадратов"</h1>
+                </div>
+                <nav class="main-nav">
+                    <a href="main_page/index.html" class="nav-link">Меню игры</a>
+                    <a href="rating.html" class="nav-link">Рейтинг игроков</a>
+                </nav>
+                <div class="user-info" id="user-info">
+                    <!-- Заполнится через JS -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="rating-container">
+            <div class="rating-header">
+                <h1>Рейтинг игроков</h1>
+                <p>Топ игроков по итоговому баллу</p>
+            </div>
+
+            <table class="rating-table" id="rating-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Игрок</th>
+                        <th>Время</th>
+                        <th>Ошибки</th>
+                        <th>Повороты</th>
+                        <th>Баллы</th>
+                    </tr>
+                </thead>
+                <tbody id="rating-body">
+                    <!-- Заполнится через JS -->
+                </tbody>
+            </table>
+
+            <div class="no-data" id="no-data" style="display: none;">
+                <p>Пока нет данных в рейтинге. Будьте первым!</p>
+            </div>
+
+            <div class="actions">
+                <button onclick="window.location.href='main_page/index.html'">В меню</button>
+                <button onclick="clearRating()" class="clear-rating">Очистить рейтинг</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно для смены имени -->
+    <div class="modal-overlay" id="name-modal-overlay"></div>
+    <div class="modal" id="name-modal">
+        <div class="modal-header">
+            <h2>Сменить имя пользователя</h2>
+            <button class="close-modal" onclick="hideNameModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <input type="text" id="new-username" placeholder="Введите новое имя" maxlength="20" class="name-input">
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="saveNewUsername()">Сохранить</button>
+                <button class="modal-btn" onclick="hideNameModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main_page/script.js"></script>
+    <script src="rating.js"></script>
+</body>
+
+</html>

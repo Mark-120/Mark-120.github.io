@@ -1,29 +1,56 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поиск квадрата - Выбор уровня</title>
+    <title>Распознание квадратов - Главное меню</title>
     <link rel="stylesheet" href="../../../styles.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .user-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .username {
+            font-weight: bold;
+            color: #7c3aed;
+        }
+        
+        .change-name-btn {
+            background: #e9d5ff;
+            color: #7c3aed;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .change-name-btn:hover {
+            background: #7c3aed;
+            color: white;
+        }
+    </style>
 </head>
-
 <body>
     <header>
         <div class="container">
             <div class="header-content">
                 <div class="logo-title">
-                    <div class="logo"></div>
-                    <div>
-                        <h1>Курсовая работа </h1>
-                        <p>Вёрстка и прототипирование сайтов</p>
-                    </div>
+                    <h1>Игра "Распознание квадратов"</h1>
                 </div>
                 <nav class="main-nav">
-                    <a href="../../../index.html" class="nav-link">О сайте</a>
-                    <a href="../../../tasks.html" class="nav-link">Практические работы</a>
-                    <a href="../../../flutter.html" class="nav-link">Кратко о Flutter</a>
+                    <a href="index.html" class="nav-link">Меню игры</a>
+                    <a href="../rating.html" class="nav-link">Рейтинг игроков</a>
                 </nav>
             </div>
         </div>
@@ -33,6 +60,10 @@
         <section class="game-section">
             <div class="card">
                 <h1>Игра "Распознание квадратов"</h1>
+                
+                <div class="user-info" id="user-info">
+                    <!-- Заполнится через JS -->
+                </div>
 
                 <div>
                     <h2>Правила игры</h2>
@@ -40,43 +71,43 @@
                     <ul>
                         <li>Образец может быть повернут на 90°, 180° или 270°</li>
                         <li>Среди предложенных квадратов ровно один совпадает с образцом</li>
-                        <li>У вас есть 3 попытки, чтобы найти правильный квадрат</li>
+                        <li>У вас есть 3 попытки на каждом уровне сложности</li>
+                        <li>Всего 12 уровней (по 3 на каждой сложности)</li>
+                        <li>Общее время на прохождение: 5 минут</li>
+                        <li>Начальный балл: 1200 (теряется за ошибки и повороты)</li>
                     </ul>
                 </div>
 
-                <h2>Выберите уровень сложности:</h2>
-
-                <div class="levels-list">
-                    <div class="level-item" data-level="easy">
-                        Легкий (3×3, 2 цвета, 6 квадратов)
-                    </div>
-
-                    <div class="level-item" data-level="medium">
-                        Средний (4×4, 3 цвета, 12 квадратов)
-                    </div>
-
-                    <div class="level-item" data-level="hard">
-                        Сложный (5×5, 4 цвета, 16 квадратов)
-                    </div>
-
-                    <div class="level-item" data-level="expert">
-                        Эксперт (6×6, 4 цвета, 20 квадратов)
-                    </div>
+                <div class="progress-info">
+                    <h2>Ваш рекорд</h2>
+                    <p id="progress-text">Новая игра</p>
                 </div>
 
-                <button class="play-btn">Играть</button>
+                <button class="play-btn" id="play-btn">Пройти игру</button>
+                
+                <div class="recent-results" id="recent-results" style="display: none;">
+                    <h3>Последний результат:</h3>
+                    <div id="last-result"></div>
+                </div>
             </div>
         </section>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>© 2025 г., Все права защищены.</p>
-            <p class="footer-text">Вёрстка и прототипирование сайтов</p>
+    <!-- Модальное окно для ввода имени -->
+    <div class="modal-overlay" id="name-modal-overlay"></div>
+    <div class="modal" id="name-modal">
+        <div class="modal-header">
+            <h2>Введите имя пользователя</h2>
         </div>
-    </footer>
+        <div class="modal-content">
+            <p>Пожалуйста, введите ваше имя для участия в рейтинге:</p>
+            <input type="text" id="new-username" placeholder="Ваше имя" maxlength="20" class="name-input">
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="saveNewUsername()">Начать игру</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
-
 </html>

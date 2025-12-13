@@ -7,6 +7,39 @@
     <title>Поиск квадрата - Игра</title>
     <link rel="stylesheet" href="../../../styles.css">
     <link rel="stylesheet" href="square_game.css">
+    <style>
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .username {
+            font-weight: bold;
+            color: #7c3aed;
+        }
+
+        .change-name-btn {
+            background: #e9d5ff;
+            color: #7c3aed;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,30 +47,27 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo-title">
-                    <div class="logo"></div>
-                    <div>
-                        <h1>Курсовая работа </h1>
-                        <p>Вёрстка и прототипирование сайтов</p>
-                    </div>
+                    <h1>Игра "Распознание квадратов"</h1>
                 </div>
                 <nav class="main-nav">
-                    <a href="../../../index.html" class="nav-link">О сайте</a>
-                    <a href="../../../tasks.html" class="nav-link">Практические работы</a>
-                    <a href="../../../flutter.html" class="nav-link">Кратко о Flutter</a>
+                    <a href="../main_page/index.html" class="nav-link">Меню игры</a>
+                    <a href="../rating.html" class="nav-link">Рейтинг игроков</a>
                 </nav>
+                <div class="user-info" id="user-info">
+                    <!-- Заполнится через JS -->
+                </div>
             </div>
         </div>
     </header>
-
 
     <main class="container">
         <div class="game-container">
             <div class="game-header">
                 <div class="header-controls">
-                    <button class="back-btn" onclick="window.location.href='../main_page/index.html'">
+                    <button class="back-btn" onclick="showExitModal()">
                         ← Назад
                     </button>
-                    <button class="restart-btn" onclick="restartGame()">
+                    <button class="restart-btn" onclick="showRestartModal()">
                         ↻ Перезапуск
                     </button>
                 </div>
@@ -45,15 +75,23 @@
                 <div class="game-stats">
                     <div class="timer">
                         <span>Время:</span>
-                        <span id="timer">00:00</span>
+                        <span id="timer">05:00</span>
                     </div>
                     <div class="attempts">
-                        <span>Неправильно:</span>
-                        <span id="wrong-attempts">0/3</span>
+                        <span>Ошибок (всего):</span>
+                        <span id="wrong-attempts">0</span>
                     </div>
                     <div class="rotations">
                         <span>Повороты:</span>
                         <span id="rotation-count">0</span>
+                    </div>
+                    <div class="wrong-current">
+                        <span>Ошибок (уровень):</span>
+                        <span id="wrong-attempts-current">0</span>
+                    </div>
+                    <div class="score">
+                        <span>Баллы:</span>
+                        <span id="current-score">1200</span>
                     </div>
                 </div>
             </div>
@@ -71,7 +109,12 @@
                     <button class="rotate-btn" onclick="rotateSample()">
                         Повернуть на 90°
                     </button>
+                    <div class="level-info" id="level-info">
+                        <!-- Заполнится через JS -->
+                    </div>
                 </div>
+
+
             </div>
         </div>
     </main>
@@ -81,19 +124,38 @@
 
     <div class="modal" id="win-modal">
         <div class="modal-header">
-            <h2>Ура! Вы победили! 🎉</h2>
+            <h2>Поздравляем! Вы прошли игру! 🎉</h2>
             <button class="close-modal" onclick="hideModal()">×</button>
         </div>
         <div class="modal-content">
-            <div class="stats">
-                <p><strong>Время:</strong> <span id="win-time">00:00</span></p>
-                <p><strong>Попытки:</strong> <span id="win-attempts">0</span></p>
-                <p><strong>Повороты:</strong> <span id="win-hints">0</span></p>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <strong id="win-username">Игрок</strong>
+                    <span>Игрок</span>
+                </div>
+                <div class="stat-item">
+                    <strong id="win-time">00:00</strong>
+                    <span>Общее время</span>
+                </div>
+                <div class="stat-item">
+                    <strong id="win-attempts">0</strong>
+                    <span>Ошибок</span>
+                </div>
+                <div class="stat-item">
+                    <strong id="win-rotations">0</strong>
+                    <span>Повороты</span>
+                </div>
+                <div class="stat-item" style="grid-column: span 2;">
+                    <strong id="win-score">1200</strong>
+                    <span>Итоговый балл</span>
+                </div>
             </div>
             <div class="modal-buttons">
-                <button class="modal-btn primary" onclick="restartGame()">Сыграть снова</button>
-                <button class="modal-btn" onclick="window.location.href='../main_page/index.html'">
+                <button class="modal-btn primary" onclick="window.location.href='../main_page/index.html'">
                     В меню
+                </button>
+                <button class="modal-btn" onclick="window.location.href='../rating.html'">
+                    Рейтинг игроков
                 </button>
             </div>
         </div>
@@ -101,20 +163,76 @@
 
     <div class="modal" id="lose-modal">
         <div class="modal-header">
-            <h2>О нет! Вы проиграли :(</h2>
+            <h2>Игра окончена</h2>
             <button class="close-modal" onclick="hideModal()">×</button>
         </div>
         <div class="modal-content">
+            <p id="lose-reason">Причина проигрыша</p>
+
+            <div class="stats">
+                <p><strong>Время:</strong> <span id="lose-time">00:00</span></p>
+                <p><strong>Ошибок:</strong> <span id="lose-attempts">0</span></p>
+                <p><strong>Повороты:</strong> <span id="lose-rotations">0</span></p>
+                <p><strong>Баллы:</strong> <span id="lose-score">0</span></p>
+            </div>
+
             <p>Правильный ответ:</p>
             <div class="correct-answer" id="correct-answer"></div>
+
             <div class="modal-buttons">
-                <button class="modal-btn primary" onclick="restartGame()">Попробовать снова</button>
+                <button class="modal-btn primary" onclick="restartGame()">Начать заново</button>
                 <button class="modal-btn" onclick="window.location.href='../main_page/index.html'">
-                    Другой уровень
+                    В меню
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- Модальное окно подтверждения выхода -->
+    <div class="modal" id="confirm-exit-modal">
+        <div class="modal-header">
+            <h2>Подтверждение выхода</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Вы уверены, что хотите покинуть страницу? Ваш прогресс будет утерян!</p>
+            <div class="confirm-buttons">
+                <button class="confirm-btn danger" onclick="goBack()">Уйти</button>
+                <button class="confirm-btn secondary" onclick="hideModal()">Остаться</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения перезапуска -->
+    <div class="modal" id="confirm-restart-modal">
+        <div class="modal-header">
+            <h2>Подтверждение перезапуска</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Вы уверены, что хотите заново начать игру? Ваш прогресс будет утерян!</p>
+            <div class="confirm-buttons">
+                <button class="confirm-btn danger" onclick="restartGame()">Перезапустить</button>
+                <button class="confirm-btn secondary" onclick="hideModal()">Отменить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно смены имени -->
+    <div class="modal" id="name-modal">
+        <div class="modal-header">
+            <h2>Сменить имя пользователя</h2>
+            <button class="close-modal" onclick="hideNameModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <input type="text" id="new-username" placeholder="Введите новое имя" maxlength="20" class="name-input">
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="saveNewUsername()">Сохранить</button>
+                <button class="modal-btn" onclick="hideNameModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="name-modal-overlay"></div>
 
     <footer>
         <div class="container">
