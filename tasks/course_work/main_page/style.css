@@ -17,6 +17,7 @@
     cursor: pointer;
     transition: all 0.3s;
     text-align: center;
+    user-select: none;
 }
 
 .level-item:hover {
