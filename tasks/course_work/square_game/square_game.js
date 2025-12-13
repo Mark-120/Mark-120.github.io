@@ -3,29 +3,24 @@ const LEVELS = {
         name: 'Легкий',
         size: 3,
         colors: 2,
-        squares: 6,
-        minDifferences: 3
+        squares: 6
     },
     medium: {
         name: 'Средний',
         size: 4,
         colors: 3,
-        squares: 12,
-        minDifferences: 4
+        squares: 12
     },
     hard: {
         name: 'Сложный',
         size: 5,
-        colors: 4,
-        squares: 16,
-        minDifferences: 5
+        colors: 4
     },
     expert: {
         name: 'Эксперт',
         size: 6,
         colors: 4,
-        squares: 20,
-        minDifferences: 6
+        squares: 20
     }
 };
 
@@ -270,14 +265,18 @@ function startNewGame() {
     document.getElementById('rotation-count').textContent = rotationCount;
     document.getElementById('timer').textContent = '00:00';
 
-    while (!hasAtLeastTwoColors(correctSquare)) {
+    do {
         correctSquare = generateRandomSquare(level.size, level.colors);
-    }
+    } while (!hasAtLeastTwoColors(correctSquare));
     console.log(correctSquare);
 
-    const wrongSquares = generateWrongSquares(correctSquare, level.squares, level.minDifferences);
+    const wrongSquares = generateWrongSquares(correctSquare, level.squares, level.size);
 
-    let squares = [correctSquare, ...wrongSquares];
+    correctSquaresOptions = getAllRotateTransformations(correctSquare);
+    let randomIndex = Math.floor(Math.random() * correctSquaresOptions.length);
+    rotatedSquare = correctSquaresOptions[randomIndex];
+
+    let squares = [rotatedSquare, ...wrongSquares];
 
     shuffleArray(squares);
 
