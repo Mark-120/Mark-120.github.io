@@ -196,7 +196,6 @@ function generateLevel() {
     gameState.correctSquare = square;
 
     let randomRotations = Math.floor(Math.random() * 4);
-    console.log(randomRotations);
     let changedSquare = square;
     for (let i = 0; i < randomRotations; i++) {
         changedSquare = rotate90(changedSquare);
