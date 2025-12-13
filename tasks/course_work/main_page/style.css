@@ -2,36 +2,6 @@
     padding: 20px 0;
 }
 
-.levels-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.level-item {
-    background: white;
-    border: 2px solid #e9d5ff;
-    border-radius: 5px;
-    padding: 15px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-    user-select: none;
-}
-
-.level-item:hover {
-    background: #f8f5ff;
-    border-color: #7c3aed;
-    transform: translateX(5px);
-}
-
-.level-item.active {
-    background: #7c3aed;
-    color: white;
-    border-color: #7c3aed;
-}
-
 .play-btn {
     background: #7c3aed;
     color: white;
@@ -52,7 +22,6 @@
 .play-btn:hover {
     background: #6b21a8;
 }
-
 
 .modal-overlay {
     position: fixed;
@@ -90,10 +59,6 @@
     line-height: 30px;
 }
 
-.modal.show {
-    display: block;
-}
-
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -121,6 +86,37 @@
 }
 
 .modal-btn.primary {
+    background: #7c3aed;
+    color: white;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    max-width: fit-content;
+    gap: 10px;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.username {
+    font-weight: bold;
+    color: #7c3aed;
+}
+
+.change-name-btn {
+    background: #e9d5ff;
+    color: #7c3aed;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.change-name-btn:hover {
     background: #7c3aed;
     color: white;
 }

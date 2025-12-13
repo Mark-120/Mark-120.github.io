@@ -48,10 +48,9 @@ function showNameModal() {
     input.value = getUsername();
     input.focus();
 
-    modal.classList.add('show');
+    modal.style.display = 'block';;
     overlay.style.display = 'block';
 
-    // Обработчик Enter
     input.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             saveNewUsername();
@@ -60,7 +59,7 @@ function showNameModal() {
 }
 
 function hideNameModal() {
-    document.getElementById('name-modal').classList.remove('show');
+    document.getElementById('name-modal').style.display = 'none';
     document.getElementById('name-modal-overlay').style.display = 'none';
 }
 
