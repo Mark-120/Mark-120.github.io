@@ -1,0 +1,580 @@
+.game-container {
+    padding: 20px 0;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 5px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.back-btn,
+.restart-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.back-btn {
+    background: #e9d5ff;
+    color: #7c3aed;
+}
+
+.restart-btn {
+    background: #7c3aed;
+    color: white;
+}
+
+.game-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+    flex-wrap: wrap;
+}
+
+.game-header .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 15px;
+    background: #f8f5ff;
+    border-radius: 5px;
+    min-width: 80px;
+    position: relative;
+}
+
+.game-header .stat-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.game-header .stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #7c3aed;
+}
+
+.score-change-container {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.score-change-label {
+    position: absolute;
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    animation: scoreChangeAnimation 1.5s ease-out forwards;
+}
+
+.score-change-label.positive {
+    color: #10b981;
+}
+
+.score-change-label.negative {
+    color: #ef4444;
+}
+
+@keyframes scoreChangeAnimation {
+    0% {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-30px) translateX(-50%);
+    }
+}
+
+.timer,
+.attempts,
+.rotations,
+.score,
+.wrong-current {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 15px;
+    background: #f8f5ff;
+    border-radius: 5px;
+}
+
+.game-area {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 1024px) {
+    .game-area {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.search-area,
+.sample-area {
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+}
+
+.sample-area {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.squares-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+    position: relative;
+    min-height: 400px;
+}
+
+.square {
+    aspect-ratio: 1;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100px;
+    height: 100px;
+}
+
+.square:hover {
+    border-color: #7c3aed;
+}
+
+.square.selected {
+    border-color: #7c3aed;
+    border-width: 3px;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+}
+
+.cell-grid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    gap: 1px;
+    background: #ddd;
+}
+
+.sample-square {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.rotate-btn {
+    width: 100%;
+    padding: 10px;
+    background: #e9d5ff;
+    color: #7c3aed;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.error-message {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 10px;
+    display: none;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    z-index: 1001;
+    display: none;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: inherit;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.modal.show {
+    display: block;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e9d5ff;
+}
+
+.modal-content {
+    padding: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-btn.primary {
+    background: #7c3aed;
+    color: white;
+}
+
+.color-0 {
+    background: #ef4444;
+}
+
+.color-1 {
+    background: #3b82f6;
+}
+
+.color-2 {
+    background: #10b981;
+}
+
+.color-3 {
+    background: #f59e0b;
+}
+
+.game-header {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.game-stats {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.level-info {
+    padding: 15px;
+    background: #f8f5ff;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.level-info strong {
+    color: #7c3aed;
+    font-size: 16px;
+}
+
+/* Floating Level Info Panel */
+.level-info-panel {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border-radius: 10px 0 0 10px;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    transition: transform 0.3s ease;
+    max-height: fit-content;
+    min-height: 200px;
+    will-change: transform;
+}
+
+.level-info-panel.hidden {
+    transform: translateY(-50%) translateX(calc(100% - 40px));
+}
+
+.level-info-panel:not(.hidden) {
+    transform: translateY(-50%) translateX(0);
+}
+
+.level-info-toggle {
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 60px;
+    background: #7c3aed;
+    color: white;
+    border: none;
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    z-index: 101;
+}
+
+.level-info-toggle .arrow {
+    transition: transform 0.3s ease;
+}
+
+.level-info-toggle .arrow.rotated {
+    transform: rotate(180deg);
+}
+
+.level-info-panel .level-info {
+    margin: 0;
+    padding: 20px;
+    min-width: 200px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Сообщения */
+.error-message.success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.error-message.error {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+/* Модальные окна - добавим стили для новых */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-item {
+    background: #f8f5ff;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.stat-item strong {
+    display: block;
+    font-size: 24px;
+    color: #7c3aed;
+    margin-bottom: 5px;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.confirm-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.confirm-btn.danger {
+    background: #ef4444;
+    color: white;
+}
+
+.confirm-btn.secondary {
+    background: #e9d5ff;
+    color: #7c3aed;
+}
+
+/* Стили для правильного квадрата при проигрыше */
+.correct-hint {
+    text-align: center;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f0fdf4;
+    border-radius: 5px;
+    border: 1px solid #bbf7d0;
+}
+
+.correct-example {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Зелёная обводка для правильного квадрата */
+.square.correct-highlight {
+    border: 3px solid #10b981 !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5) !important;
+}
+
+/* Индикатор номера правильного квадрата */
+.correct-number {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #10b981;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Mode 2: Drop Zone */
+.drop-zone {
+    width: 200px;
+    height: 200px;
+    border: 3px dashed #7c3aed;
+    border-radius: 10px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f5ff;
+    text-align: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.sample-area-text {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8f5ff;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+    min-height: 40px;
+}
+
+/* Mode 2 & 3 Controls */
+.mode-2-controls,
+.mode-3-controls {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f5ff;
+    border-radius: 5px;
+}
+
+.dizziness-warning {
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    color: #92400e;
+    font-size: 14px;
+    text-align: center;
+}
+
+.complication-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.complication-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.complication-description {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+.rotation-speed-control {
+    margin-bottom: 15px;
+}
+
+.rotation-speed-control label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.rotation-speed-control input[type="range"] {
+    width: 100%;
+}
+
+.display-mode-control {
+    margin-top: 15px;
+}
+
+.display-mode-control label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.display-mode-control select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск квадрата - Игра</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="square_game.css">
+    <style>
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .username {
+            font-weight: bold;
+            color: #7c3aed;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-title">
+                    <h1>Игра "Распознание квадратов"</h1>
+                </div>
+                <nav class="main-nav">
+                    <a href="../main_page/index.html" class="nav-link">Меню игры</a>
+                    <a href="../rating.html" class="nav-link">Рейтинг игроков</a>
+                </nav>
+                <div class="user-info" id="user-info"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="game-container">
+            <div class="game-header">
+                <div class="header-controls">
+                    <button class="back-btn" onclick="return showExitModal()">
+                        ← Назад
+                    </button>
+                    <button class="restart-btn" onclick="return showRestartModal()">
+                        ↻ Перезапуск
+                    </button>
+                </div>
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Время</span>
+                        <span class="stat-value" id="header-timer">00:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Прогресс</span>
+                        <span class="stat-value" id="header-progress">0/9</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Баллы</span>
+                        <span class="stat-value" id="header-score">0</span>
+                        <div id="score-change-container" class="score-change-container"></div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Ошибок</span>
+                        <span class="stat-value" id="header-errors">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Повороты</span>
+                        <span class="stat-value" id="header-turns">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="search-area">
+                    <h2>Найдите соответствующий квадрат:</h2>
+                    <div class="error-message" id="error-message"></div>
+                    <div class="squares-grid" id="squares-container"></div>
+                </div>
+
+                <div class="sample-area">
+                    <h2>Образец</h2>
+                    <div class="sample-square" id="sample-square"></div>
+                    <button class="rotate-btn" onclick="rotateSample()">
+                        Повернуть на 90°
+                    </button>
+                    <div id="sample-area-text" class="sample-area-text"></div>
+                    <div id="drop-zone" class="drop-zone" style="display: none;"></div>
+
+                    <!-- Mode 2 Controls -->
+                    <div class="mode-2-controls" style="display: none;">
+                        <label class="complication-checkbox">
+                            <input type="checkbox" id="chaotic-complication-checkbox">
+                            <span>Усложнить режим (+50 баллов за правильный ответ)</span>
+                        </label>
+                        <p class="complication-description">Квадраты будут каждые 10 секунд менять своё местоположение
+                        </p>
+                    </div>
+
+                    <!-- Mode 3 Controls -->
+                    <div class="mode-3-controls" style="display: none;">
+                        <div class="dizziness-warning">
+                            <strong>⚠️ Предупреждение:</strong> Этот режим может вызвать головокружение у некоторых людей.
+                        </div>
+                        <div class="rotation-speed-control">
+                            <label for="rotation-speed-slider">Rotation speed:</label>
+                            <input type="range" id="rotation-speed-slider" min="0.5" max="5" step="0.1" value="1">
+                        </div>
+                        <label class="complication-checkbox">
+                            <input type="checkbox" id="flying-mode-checkbox">
+                            <span>Complicate mode (+200 points)</span>
+                        </label>
+                        <p class="complication-description">Squares will start flying all over the screen</p>
+                        <div class="display-mode-control">
+                            <label for="display-mode-select">Display modes:</label>
+                            <select id="display-mode-select">
+                                <option value="normal">Normal</option>
+                                <option value="sepia">Sepia</option>
+                                <option value="invert">Color inversion</option>
+                                <option value="grayscale">Black and white cinema</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Level Info Panel -->
+            <div id="level-info-panel" class="level-info-panel">
+                <button id="level-info-toggle" class="level-info-toggle">
+                    <span class="arrow">→</span>
+                </button>
+                <div class="level-info" id="level-info">
+                    <p id="timer">00:00</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <div class="modal" id="win-modal">
+        <div class="modal-header">
+            <h2>Ура! Вы прошли игру!</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <strong id="win-username">Игрок</strong>
+                    <span>Игрок</span>
+                </div>
+                <div class="stat-item">
+                    <strong id="win-time">00:00</strong>
+                    <span>Общее время</span>
+                </div>
+                <div class="stat-item">
+                    <strong id="win-attempts">0</strong>
+                    <span>Ошибок</span>
+                </div>
+                <div class="stat-item">
+                    <strong id="win-rotations">0</strong>
+                    <span>Повороты</span>
+                </div>
+                <div class="stat-item" style="grid-column: span 2;">
+                    <strong id="win-score">1200</strong>
+                    <span>Итоговый балл</span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="window.location.href='../main_page/index.html'">
+                    В меню
+                </button>
+                <button class="modal-btn" onclick="window.location.href='../rating.html'">
+                    Рейтинг игроков
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="lose-modal">
+        <div class="modal-header">
+            <h2>Игра окончена</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <p id="lose-reason">Причина проигрыша</p>
+
+            <div class="stats">
+                <p><strong>Ошибок:</strong> <span id="lose-attempts">0</span></p>
+                <p><strong>Повороты:</strong> <span id="lose-rotations">0</span></p>
+                <p><strong>Баллы:</strong> <span id="lose-score">0</span></p>
+            </div>
+
+            <div class="correct-hint">
+                <div style="display: inline-block; position: relative; margin: 10px;">
+                    <div class="correct-number">
+                        ✓ 3
+                    </div>
+                </div>
+                <p><small>Правильный ответ отмечен зелёной обводкой и номером сверху справа</small></p>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="restartGame()">Начать заново</button>
+                <button class="modal-btn" onclick="window.location.href='../main_page/index.html'">
+                    В меню
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="confirm-exit-modal">
+        <div class="modal-header">
+            <h2>Подтверждение выхода</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Вы уверены, что хотите покинуть страницу? Ваш прогресс будет утерян!</p>
+            <div class="confirm-buttons">
+                <button class="confirm-btn danger" onclick="goBack()">Уйти</button>
+                <button class="confirm-btn secondary" onclick="hideModal()">Остаться</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="confirm-restart-modal">
+        <div class="modal-header">
+            <h2>Подтверждение перезапуска</h2>
+            <button class="close-modal" onclick="hideModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Вы уверены, что хотите заново начать игру? Ваш прогресс будет утерян!</p>
+            <div class="confirm-buttons">
+                <button class="confirm-btn danger" onclick="restartGame()">Перезапустить</button>
+                <button class="confirm-btn secondary" onclick="hideModal()">Отменить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="square_game.js"></script>
+</body>
+
+</html>

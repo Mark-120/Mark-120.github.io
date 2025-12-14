@@ -1,0 +1,112 @@
+.rating-container {
+    padding: 20px 0;
+}
+
+.rating-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.rating-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rating-table th {
+    background: #7c3aed;
+    color: white;
+    padding: 15px;
+    text-align: left;
+}
+
+.rating-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9d5ff;
+}
+
+.rating-table tr:hover {
+    background: #f8f5ff;
+}
+
+.rating-table tr:last-child td {
+    border-bottom: none;
+}
+
+.medal {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.gold {
+    background: gold;
+    color: #000;
+}
+
+.silver {
+    background: silver;
+    color: #000;
+}
+
+.bronze {
+    background: #cd7f32;
+    color: #000;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.actions button {
+    padding: 10px 20px;
+    background: #7c3aed;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.actions button:hover {
+    background: #6b21a8;
+}
+
+.clear-rating {
+    background: #ef4444 !important;
+}
+
+.clear-rating:hover {
+    background: #dc2626 !important;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.username {
+    font-weight: bold;
+    color: #7c3aed;
+}

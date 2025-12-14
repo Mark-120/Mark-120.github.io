@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Распознание квадратов - Главное меню</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-title">
+                    <h1>Игра "Распознание квадратов"</h1>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link">Меню игры</a>
+                    <a href="../rating.html" class="nav-link">Рейтинг игроков</a>
+                </nav>
+                <div class="user-info" id="user-info"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="game-section">
+            <div class="card">
+                <h1>Игра "Распознание квадратов"</h1>
+
+                <div>
+                    <h2>Правила игры</h2>
+                    <p>Ваша задача - найти среди множества квадратов тот, который идентичен образцу.</p>
+                    <ul>
+                        <li>Образец может быть повернут на 90°, 180° или 270°</li>
+                        <li>Среди предложенных квадратов ровно один совпадает с образцом</li>
+                        <li>Всего 9 уровней (3 режима × 3 уровня сложности)</li>
+                        <li>Общее время на прохождение: 10 минут</li>
+                        <li>Начальный балл: 0 (начисляется за правильные ответы, вычитается за ошибки и повороты)</li>
+                        <li>Игра заканчивается только при истечении времени</li>
+                    </ul>
+                </div>
+
+                <button class="play-btn" id="play-btn">Пройти игру</button>
+
+                <div class="recent-results" id="recent-results" style="display: none;">
+                    <h3>Последний результат:</h3>
+                    <div id="last-result"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Модальное окно для ввода имени -->
+    <div class="modal-overlay" id="name-modal-overlay"></div>
+    <div class="modal" id="name-modal">
+        <div class="modal-header">
+            <h2>Введите имя пользователя</h2>
+        </div>
+        <div class="modal-content">
+            <p>Пожалуйста, введите ваше имя для участия в рейтинге:</p>
+            <input type="text" id="new-username" placeholder="Ваше имя" maxlength="20" class="name-input">
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="saveNewUsername()">Начать игру</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
