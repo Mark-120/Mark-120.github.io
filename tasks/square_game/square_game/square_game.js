@@ -1,23 +1,23 @@
 // 9 sequential levels
 const LEVELS = [
-    // Level 1: 3x3, 2 colors, 9 cards, Mode 1, p=100, n=200, m=50 (Easy)
-    { mode: 1, difficulty: 'Easy', size: 3, colors: 2, squares: 9, p: 100, n: 200, m: 50 },
-    // Level 2: 4x4, 3 colors, 9 cards, Mode 1, p=100, n=150, m=30 (Medium)
-    { mode: 1, difficulty: 'Medium', size: 4, colors: 3, squares: 9, p: 100, n: 150, m: 30 },
-    // Level 3: 5x5, 4 colors, 9 cards, Mode 1, p=100, n=100, m=20 (Hard)
-    { mode: 1, difficulty: 'Hard', size: 5, colors: 4, squares: 9, p: 100, n: 100, m: 20 },
-    // Level 4: 3x3, 2 colors, 9 cards, Mode 2, p=200, n=200, m=50 (Easy)
-    { mode: 2, difficulty: 'Easy', size: 3, colors: 2, squares: 9, p: 200, n: 200, m: 50 },
-    // Level 5: 4x4, 3 colors, 9 cards, Mode 2, p=200, n=150, m=30 (Medium)
-    { mode: 2, difficulty: 'Medium', size: 4, colors: 3, squares: 9, p: 200, n: 150, m: 30 },
-    // Level 6: 5x5, 4 colors, 9 cards, Mode 2, p=200, n=100, m=20 (Hard)
-    { mode: 2, difficulty: 'Hard', size: 5, colors: 4, squares: 9, p: 200, n: 100, m: 20 },
-    // Level 7: 3x3, 2 colors, 9 cards, Mode 3, p=300, n=200, m=50 (Easy)
-    { mode: 3, difficulty: 'Easy', size: 3, colors: 2, squares: 9, p: 300, n: 200, m: 50 },
-    // Level 8: 4x4, 3 colors, 9 cards, Mode 3, p=300, n=150, m=30 (Medium)
-    { mode: 3, difficulty: 'Medium', size: 4, colors: 3, squares: 9, p: 300, n: 150, m: 30 },
-    // Level 9: 5x5, 4 colors, 9 cards, Mode 3, p=300, n=100, m=20 (Hard)
-    { mode: 3, difficulty: 'Hard', size: 5, colors: 4, squares: 9, p: 300, n: 100, m: 20 }
+    // Level 1: 3x3, 2 colors, 9 cards, Mode 1, p=100, n=200, m=50 (Лёгкая)
+    { mode: 1, difficulty: 'Лёгкая', size: 3, colors: 2, squares: 9, p: 100, n: 200, m: 50 },
+    // Level 2: 4x4, 3 colors, 9 cards, Mode 1, p=100, n=150, m=30 (Средняя)
+    { mode: 1, difficulty: 'Средняя', size: 4, colors: 3, squares: 9, p: 100, n: 150, m: 30 },
+    // Level 3: 5x5, 4 colors, 9 cards, Mode 1, p=100, n=100, m=20 (Тяжёлая)
+    { mode: 1, difficulty: 'Тяжёлая', size: 5, colors: 4, squares: 9, p: 100, n: 100, m: 20 },
+    // Level 4: 3x3, 2 colors, 9 cards, Mode 2, p=200, n=200, m=50 (Лёгкая)
+    { mode: 2, difficulty: 'Лёгкая', size: 3, colors: 2, squares: 9, p: 200, n: 200, m: 50 },
+    // Level 5: 4x4, 3 colors, 9 cards, Mode 2, p=200, n=150, m=30 (Средняя)
+    { mode: 2, difficulty: 'Средняя', size: 4, colors: 3, squares: 9, p: 200, n: 150, m: 30 },
+    // Level 6: 5x5, 4 colors, 9 cards, Mode 2, p=200, n=100, m=20 (Тяжёлая)
+    { mode: 2, difficulty: 'Тяжёлая', size: 5, colors: 4, squares: 9, p: 200, n: 100, m: 20 },
+    // Level 7: 3x3, 2 colors, 9 cards, Mode 3, p=300, n=200, m=50 (Лёгкая)
+    { mode: 3, difficulty: 'Лёгкая', size: 3, colors: 2, squares: 9, p: 300, n: 200, m: 50 },
+    // Level 8: 4x4, 3 colors, 9 cards, Mode 3, p=300, n=150, m=30 (Средняя)
+    { mode: 3, difficulty: 'Средняя', size: 4, colors: 3, squares: 9, p: 300, n: 150, m: 30 },
+    // Level 9: 5x5, 4 colors, 9 cards, Mode 3, p=300, n=100, m=20 (Тяжёлая)
+    { mode: 3, difficulty: 'Тяжёлая', size: 5, colors: 4, squares: 9, p: 300, n: 100, m: 20 }
 ];
 
 const TOTAL_LEVELS = 9;
@@ -25,16 +25,9 @@ const TOTAL_TIME = 10 * 60 * 1000;
 const START_SCORE = 0;
 
 // Helper functions
-function getModeFromLevel(level) {
-    return LEVELS[level - 1].mode;
-}
-
-function getDifficultyFromLevel(level) {
-    return LEVELS[level - 1].difficulty;
-}
 
 function getModeName(mode) {
-    const names = { 1: 'Normal', 2: 'Chaotic', 3: 'Flying' };
+    const names = { 1: 'Обычный', 2: 'Хаотичный', 3: 'Летающий' };
     return names[mode] || 'Unknown';
 }
 
@@ -250,9 +243,9 @@ function getModeDescription(mode) {
 
 function getDifficultyDescription(difficulty) {
     const descriptions = {
-        'Easy': "Легкий уровень с небольшим количеством цветов и простой сеткой.",
-        'Medium': "Средний уровень с умеренным количеством цветов и средним размером сетки.",
-        'Hard': "Сложный уровень с большим количеством цветов и крупной сеткой."
+        'Лёгкая': "Размер квадрата: 3х3<br>Количество цветов:2",
+        'Средняя': "Размер квадрата: 4х4<br>Количество цветов:3",
+        'Тяжёлая': "Размер квадрата: 5х5<br>Количество цветов:4",
     };
     return descriptions[difficulty] || "";
 }
@@ -267,9 +260,9 @@ function updateLevelInfo() {
 
     levelInfoElement.innerHTML = `
         <strong>Режим: ${mode}</strong><br>
-        Описание: ${modeDescription}<br><br>
+        Описание: ${modeDescription}<br>&nbsp;<br>
         <strong>Сложность: ${level.difficulty}</strong><br>
-        Описание: ${difficultyDescription}<br><br>
+        ${difficultyDescription}<br>&nbsp;<br>
         Баллы за правильный ответ: ${level.p}<br>
         Штраф за ошибку: ${level.n}<br>
         Штраф за поворот: ${level.m}
@@ -292,15 +285,14 @@ function updateTimer() {
 
     const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     timerElement.textContent = timeString;
-    
+
     // Update header timer
     const headerTimer = document.getElementById('header-timer');
     if (headerTimer) {
         headerTimer.textContent = timeString;
     }
-    
+
     // Update level info panel to reflect timer changes
-    updateLevelInfo();
 }
 
 function startTimer() {
@@ -554,7 +546,7 @@ function showScoreChange(points, isPositive) {
     const label = document.createElement('div');
     label.className = `score-change-label ${isPositive ? 'positive' : 'negative'}`;
     label.textContent = `${isPositive ? '+' : '-'}${points}`;
-    
+
     scoreChangeContainer.appendChild(label);
 
     // Remove after animation completes
@@ -804,7 +796,7 @@ function createConfetti() {
 
     animate();
 
-    // Stop after 3 seconds
+    // Stop after 10 seconds
     setTimeout(() => {
         cancelAnimationFrame(animationId);
         if (canvas.parentNode) {
@@ -826,7 +818,7 @@ function showWinModal(timeSpent) {
 
     modal.classList.add('show');
     overlay.style.display = 'block';
-    
+
     // Trigger confetti
     createConfetti();
 }
@@ -956,7 +948,7 @@ function updateModeControls() {
     if (squaresContainer) {
         if (level.mode === 2) {
             squaresContainer.style.position = 'relative';
-            squaresContainer.style.minHeight = '400px';
+            squaresContainer.style.height = '70%';
         } else {
             squaresContainer.style.position = '';
             squaresContainer.style.minHeight = '';
@@ -967,7 +959,7 @@ function updateModeControls() {
 // Mode 2: Chaotic - Random positioning
 function positionSquaresRandomly() {
     const squares = document.querySelectorAll('#squares-container .square');
-    const container = squaresContainer;
+    const container = document.getElementById('squares-container');
     if (!container) return;
 
     const containerRect = container.getBoundingClientRect();
