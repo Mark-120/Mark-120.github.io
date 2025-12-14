@@ -1,22 +1,12 @@
-// 9 sequential levels
 const LEVELS = [
-    // Level 1: 3x3, 2 colors, 9 cards, Mode 1, p=100, n=200, m=50 (Лёгкая)
     { mode: 1, difficulty: 'Лёгкая', size: 3, colors: 2, squares: 9, p: 100, n: 200, m: 50 },
-    // Level 2: 4x4, 3 colors, 9 cards, Mode 1, p=100, n=150, m=30 (Средняя)
     { mode: 1, difficulty: 'Средняя', size: 4, colors: 3, squares: 9, p: 100, n: 150, m: 30 },
-    // Level 3: 5x5, 4 colors, 9 cards, Mode 1, p=100, n=100, m=20 (Тяжёлая)
     { mode: 1, difficulty: 'Тяжёлая', size: 5, colors: 4, squares: 9, p: 100, n: 100, m: 20 },
-    // Level 4: 3x3, 2 colors, 9 cards, Mode 2, p=200, n=200, m=50 (Лёгкая)
     { mode: 2, difficulty: 'Лёгкая', size: 3, colors: 2, squares: 9, p: 200, n: 200, m: 50 },
-    // Level 5: 4x4, 3 colors, 9 cards, Mode 2, p=200, n=150, m=30 (Средняя)
     { mode: 2, difficulty: 'Средняя', size: 4, colors: 3, squares: 9, p: 200, n: 150, m: 30 },
-    // Level 6: 5x5, 4 colors, 9 cards, Mode 2, p=200, n=100, m=20 (Тяжёлая)
     { mode: 2, difficulty: 'Тяжёлая', size: 5, colors: 4, squares: 9, p: 200, n: 100, m: 20 },
-    // Level 7: 3x3, 2 colors, 9 cards, Mode 3, p=300, n=200, m=50 (Лёгкая)
     { mode: 3, difficulty: 'Лёгкая', size: 3, colors: 2, squares: 9, p: 300, n: 200, m: 50 },
-    // Level 8: 4x4, 3 colors, 9 cards, Mode 3, p=300, n=150, m=30 (Средняя)
     { mode: 3, difficulty: 'Средняя', size: 4, colors: 3, squares: 9, p: 300, n: 150, m: 30 },
-    // Level 9: 5x5, 4 colors, 9 cards, Mode 3, p=300, n=100, m=20 (Тяжёлая)
     { mode: 3, difficulty: 'Тяжёлая', size: 5, colors: 4, squares: 9, p: 300, n: 100, m: 20 }
 ];
 
@@ -24,28 +14,23 @@ const TOTAL_LEVELS = 9;
 const TOTAL_TIME = 10 * 60 * 1000;
 const START_SCORE = 0;
 
-// Helper functions
-
 function getModeName(mode) {
     const names = { 1: 'Обычный', 2: 'Хаотичный', 3: 'Летающий' };
     return names[mode] || 'Unknown';
 }
 
 let gameState = {
-    currentLevel: 1, // 1-9
+    currentLevel: 1,
     wrongAttempts: 0,
     rotations: 0,
-    wrongAttemptsCurrentLevel: 0,
     score: START_SCORE,
     startTime: null,
     timerInterval: null,
     gameStarted: false,
     correctSquare: null,
     currentLevelData: null,
-    // Mode 2 specific
     chaoticComplicationMode: false,
     chaoticRepositionTimer: null,
-    // Mode 3 specific
     rotationSpeed: 1,
     flyingMode: false,
     displayMode: 'normal',
@@ -53,33 +38,26 @@ let gameState = {
     squareVelocities: []
 };
 
-let timerElement, wrongAttemptsElement, rotationsElement;
-let wrongAttemptsCurrentElement, scoreElement, levelInfoElement;
+let wrongAttemptsElement, rotationsElement;
+let scoreElement, levelInfoElement;
 let errorMessageElement, squaresContainer, sampleContainer;
 let levelInfoPanel, levelInfoToggle;
 let rotationSpeedSlider, flyingModeCheckbox, displayModeSelect;
 let chaoticComplicationCheckbox, dropZone;
-
 let isGameOver = false;
 
 document.addEventListener('DOMContentLoaded', function () {
     if (document.querySelector('.game-area')) {
         initElements();
-        // Ensure level info panel is visible by default
-        if (levelInfoPanel && !levelInfoPanel.classList.contains('hidden')) {
-            // Panel is visible
-        }
         startNewGame();
-        updateUserInfo();
+        getUserInfo();
         initModals();
     }
 });
 
 function initElements() {
-    timerElement = document.getElementById('timer');
     wrongAttemptsElement = document.getElementById('wrong-attempts');
     rotationsElement = document.getElementById('rotation-count');
-    wrongAttemptsCurrentElement = document.getElementById('wrong-attempts-current');
     scoreElement = document.getElementById('current-score');
     levelInfoElement = document.getElementById('level-info');
     errorMessageElement = document.getElementById('error-message');
@@ -93,12 +71,10 @@ function initElements() {
     chaoticComplicationCheckbox = document.getElementById('chaotic-complication-checkbox');
     dropZone = document.getElementById('drop-zone');
 
-    // Initialize level info panel toggle
     if (levelInfoToggle) {
         levelInfoToggle.addEventListener('click', toggleLevelInfoPanel);
     }
 
-    // Initialize Mode 3 controls
     if (rotationSpeedSlider) {
         rotationSpeedSlider.addEventListener('input', updateRotationSpeed);
     }
@@ -113,7 +89,7 @@ function initElements() {
     }
 }
 
-function updateUserInfo() {
+function getUserInfo() {
     const userInfo = document.getElementById('user-info');
     if (userInfo) {
         const username = localStorage.getItem('squareGameUsername') || 'Игрок';
@@ -126,7 +102,6 @@ function updateUserInfo() {
 function startNewGame() {
     isGameOver = false;
 
-    // Stop any animations
     if (rotationAnimationId) {
         cancelAnimationFrame(rotationAnimationId);
         rotationAnimationId = null;
@@ -158,7 +133,6 @@ function resetGameState() {
         currentLevel: 1,
         wrongAttempts: 0,
         rotations: 0,
-        wrongAttemptsCurrentLevel: 0,
         score: START_SCORE,
         startTime: Date.now(),
         timerInterval: null,
@@ -174,13 +148,11 @@ function resetGameState() {
         squareVelocities: []
     };
 
-    // Reset UI controls
     if (chaoticComplicationCheckbox) chaoticComplicationCheckbox.checked = false;
     if (flyingModeCheckbox) flyingModeCheckbox.checked = false;
     if (displayModeSelect) displayModeSelect.value = 'normal';
     if (rotationSpeedSlider) rotationSpeedSlider.value = 1;
 
-    // Clear timers
     if (gameState.chaoticRepositionTimer) {
         clearInterval(gameState.chaoticRepositionTimer);
         gameState.chaoticRepositionTimer = null;
@@ -188,7 +160,6 @@ function resetGameState() {
 }
 
 function updateGameStats() {
-
     if (wrongAttemptsElement) {
         wrongAttemptsElement.textContent = gameState.wrongAttempts;
     }
@@ -196,23 +167,18 @@ function updateGameStats() {
         rotationsElement.textContent = gameState.rotations;
     }
 
-    if (wrongAttemptsCurrentElement) {
-        wrongAttemptsCurrentElement.textContent = gameState.wrongAttemptsCurrentLevel;
-    }
-
     if (scoreElement) {
         scoreElement.textContent = gameState.score;
     }
 
-    // Update header stats
     const headerTimer = document.getElementById('header-timer');
     const headerProgress = document.getElementById('header-progress');
     const headerScore = document.getElementById('header-score');
     const headerErrors = document.getElementById('header-errors');
     const headerTurns = document.getElementById('header-turns');
 
-    if (headerTimer && timerElement) {
-        headerTimer.textContent = timerElement.textContent;
+    if (headerTimer) {
+        headerTimer.textContent = '10:00';
     }
     if (headerProgress) {
         headerProgress.textContent = `${gameState.currentLevel}/9`;
@@ -284,35 +250,29 @@ function updateTimer() {
     const seconds = Math.floor((remaining % 60000) / 1000);
 
     const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    timerElement.textContent = timeString;
 
-    // Update header timer
     const headerTimer = document.getElementById('header-timer');
     if (headerTimer) {
         headerTimer.textContent = timeString;
     }
 
-    // Update level info panel to reflect timer changes
 }
 
 function startTimer() {
     clearInterval(gameState.timerInterval);
     gameState.timerInterval = setInterval(() => {
         updateTimer();
-        // Only lose on time, not score
+
     }, 1000);
 }
 
 function generateLevel() {
     gameState.currentLevelData = LEVELS[gameState.currentLevel - 1];
     const level = gameState.currentLevelData;
-    gameState.wrongAttemptsCurrentLevel = 0;
 
-    // Reset mode-specific state
     gameState.selectedSquareIndex = 0;
     gameState.squareVelocities = [];
 
-    // Clear timers
     if (gameState.chaoticRepositionTimer) {
         clearInterval(gameState.chaoticRepositionTimer);
         gameState.chaoticRepositionTimer = null;
@@ -327,7 +287,7 @@ function generateLevel() {
 
     let randomRotations = Math.floor(Math.random() * 4);
     let changedSquare = square;
-    for (let i = 0; i < randomRotations; i++) {
+    for (let i = 0; i <= randomRotations; i++) {
         changedSquare = rotate90(changedSquare);
     }
 
@@ -341,10 +301,8 @@ function generateLevel() {
 
     squaresContainer.innerHTML = '';
 
-    // Update sample area text based on mode
     updateSampleAreaText();
 
-    // Show/hide mode-specific controls
     updateModeControls();
 
     squares.forEach((sq, index) => {
@@ -355,33 +313,28 @@ function generateLevel() {
         }
         squareElement.dataset.index = index;
 
-        // Mode-specific event handlers
         if (level.mode === 1) {
-            // Normal mode: click
+
             squareElement.addEventListener('click', () => handleSquareClick(isCorrect, squareElement));
         } else if (level.mode === 2) {
-            // Chaotic mode: drag with right mouse button
+
             setupDragAndDrop(squareElement, isCorrect);
-        } else if (level.mode === 3) {
-            // Flying mode: keyboard selection (handled globally)
-            // No click handler needed
         }
 
         squaresContainer.appendChild(squareElement);
     });
 
-    // Apply mode-specific rendering
     if (level.mode === 2) {
-        // Prevent context menu globally for Mode 2
+
         document.addEventListener('contextmenu', preventContextMenuMode2, true);
-        // Wait a bit for DOM to update
+
         setTimeout(() => {
             positionSquaresRandomly();
         }, 100);
     } else if (level.mode === 3) {
-        // Remove context menu prevention when not in Mode 2
+
         document.removeEventListener('contextmenu', preventContextMenuMode2, true);
-        // Position squares randomly like Mode 2
+
         setTimeout(() => {
             positionSquaresRandomly();
             startRotationAnimation();
@@ -391,7 +344,7 @@ function generateLevel() {
             highlightSelectedSquare();
         }, 100);
     } else {
-        // Mode 1: Reset positioning
+
         const squares = document.querySelectorAll('#squares-container .square');
         squares.forEach(square => {
             square.style.position = '';
@@ -401,7 +354,6 @@ function generateLevel() {
         });
     }
 
-    // Apply display mode filter
     applyDisplayMode();
 
     updateGameStats();
@@ -549,7 +501,6 @@ function showScoreChange(points, isPositive) {
 
     scoreChangeContainer.appendChild(label);
 
-    // Remove after animation completes
     setTimeout(() => {
         if (label.parentNode) {
             label.parentNode.removeChild(label);
@@ -561,7 +512,6 @@ function handleCorrectAnswer() {
     const level = gameState.currentLevelData;
     let pointsToAdd = level.p;
 
-    // Bonus points for complication modes
     if (level.mode === 2 && gameState.chaoticComplicationMode) {
         pointsToAdd += 50;
     } else if (level.mode === 3 && gameState.flyingMode) {
@@ -586,25 +536,12 @@ function handleCorrectAnswer() {
 
 function handleWrongAnswer(element) {
     gameState.wrongAttempts++;
-    gameState.wrongAttemptsCurrentLevel++;
     const level = gameState.currentLevelData;
-    gameState.score -= level.n; // Can go negative
+    gameState.score -= level.n;
     showScoreChange(level.n, false);
     updateGameStats();
-
-    if (element) {
-        element.style.borderColor = '#ef4444';
-        element.style.boxShadow = '0 0 10px #ef4444';
-        setTimeout(() => {
-            if (element) {
-                element.style.borderColor = '';
-                element.style.boxShadow = '';
-            }
-        }, 1000);
-    }
-
     showMessage('Неправильный квадрат!', 'error');
-    // No game over for errors or negative score
+
 }
 
 function rotateSample() {
@@ -614,7 +551,7 @@ function rotateSample() {
     gameState.rotations++;
 
     const level = gameState.currentLevelData;
-    gameState.score -= level.m; // Can go negative
+    gameState.score -= level.m;
 
     sampleContainer.innerHTML = '';
     sampleContainer.appendChild(createSquareElement(gameState.correctSquare, true));
@@ -646,7 +583,6 @@ function gameOver(reason) {
     clearInterval(gameState.timerInterval);
     gameState.gameStarted = false;
 
-    // Stop animations
     if (rotationAnimationId) {
         cancelAnimationFrame(rotationAnimationId);
         rotationAnimationId = null;
@@ -656,7 +592,6 @@ function gameOver(reason) {
         flyingAnimationId = null;
     }
 
-    // Clear mode-specific timers
     if (gameState.chaoticRepositionTimer) {
         clearInterval(gameState.chaoticRepositionTimer);
         gameState.chaoticRepositionTimer = null;
@@ -667,7 +602,6 @@ function gameOver(reason) {
     if (reason === 'win') {
         showWinModal(timeSpent);
 
-        // Сохраняем в рейтинг
         const gameData = {
             username: localStorage.getItem('squareGameUsername') || 'Игрок',
             time: timeSpent,
@@ -679,7 +613,7 @@ function gameOver(reason) {
         addToRating(gameData);
 
     } else {
-        // Only time can cause loss now
+
         let message = 'Время вышло!';
         highlightCorrectSquare();
         showLoseModal(timeSpent, message);
@@ -746,7 +680,6 @@ function createConfetti() {
     const confetti = [];
     const confettiCount = 150;
 
-    // Create confetti particles on left and right sides
     for (let i = 0; i < confettiCount; i++) {
         const side = i % 2 === 0 ? 'left' : 'right';
         confetti.push({
@@ -796,7 +729,6 @@ function createConfetti() {
 
     animate();
 
-    // Stop after 10 seconds
     setTimeout(() => {
         cancelAnimationFrame(animationId);
         if (canvas.parentNode) {
@@ -812,14 +744,13 @@ function showWinModal(timeSpent) {
     document.getElementById('win-time').textContent = formatTime(timeSpent);
     document.getElementById('win-attempts').textContent = gameState.wrongAttempts;
     document.getElementById('win-rotations').textContent = gameState.rotations;
-    // Display negative scores if applicable
+
     document.getElementById('win-score').textContent = gameState.score;
     document.getElementById('win-username').textContent = localStorage.getItem('squareGameUsername') || 'Игрок';
 
     modal.classList.add('show');
     overlay.style.display = 'block';
 
-    // Trigger confetti
     createConfetti();
 }
 
@@ -888,8 +819,6 @@ function showRestartModal() {
     return false;
 }
 
-// Mode-specific functions
-
 function toggleLevelInfoPanel() {
     if (levelInfoPanel) {
         levelInfoPanel.classList.toggle('hidden');
@@ -913,7 +842,7 @@ function updateSampleAreaText() {
         if (level.mode === 2) {
             sampleAreaText.textContent = 'Перетащите правильный квадрат в эту область, удерживая правую кнопку мыши.';
         } else if (level.mode === 3) {
-            sampleAreaText.textContent = 'Press Ctrl until the square you want to select is highlighted. Press Enter to confirm your choice.';
+            sampleAreaText.textContent = 'Нажимайте Ctrl до тех пор, пока не выделится квадрат, который вы хотите выбрать. Нажмите Enter, чтобы подтвердить свой выбор';
         }
     }
 }
@@ -928,7 +857,6 @@ function preventContextMenuMode2(e) {
 function updateModeControls() {
     const level = gameState.currentLevelData;
 
-    // Show/hide mode-specific controls
     const mode2Controls = document.querySelector('.mode-2-controls');
     const mode3Controls = document.querySelector('.mode-3-controls');
 
@@ -939,14 +867,12 @@ function updateModeControls() {
         mode3Controls.style.display = level.mode === 3 ? 'block' : 'none';
     }
 
-    // Show/hide drop zone for Mode 2
     if (dropZone) {
         dropZone.style.display = level.mode === 2 ? 'flex' : 'none';
     }
 
-    // Update squares container positioning for Mode 2
     if (squaresContainer) {
-        if (level.mode === 2) {
+        if (level.mode === 2 || level.mode === 3) {
             squaresContainer.style.position = 'relative';
             squaresContainer.style.height = '70%';
         } else {
@@ -956,14 +882,13 @@ function updateModeControls() {
     }
 }
 
-// Mode 2: Chaotic - Random positioning
 function positionSquaresRandomly() {
     const squares = document.querySelectorAll('#squares-container .square');
     const container = document.getElementById('squares-container');
     if (!container) return;
 
     const containerRect = container.getBoundingClientRect();
-    const minDistance = 80; // Minimum distance between square centers
+    const minDistance = 80;
     const squareSize = 100;
 
     squares.forEach((square, index) => {
@@ -981,7 +906,7 @@ function positionSquaresRandomly() {
             y = Math.random() * (containerRect.height - squareSize - 20) + 10;
 
             validPosition = true;
-            // Check distance from other squares
+
             for (let i = 0; i < index; i++) {
                 const otherSquare = squares[i];
                 if (!otherSquare) continue;
@@ -1005,16 +930,14 @@ function positionSquaresRandomly() {
     });
 }
 
-// Mode 2: Drag and drop
 function setupDragAndDrop(squareElement, isCorrect) {
     let isDragging = false;
     let startX, startY, initialX, initialY;
-    let dragHandler = null;
     let moveHandler = null;
     let upHandler = null;
 
     const mousedownHandler = (e) => {
-        if (e.button === 2) { // Right mouse button
+        if (e.button === 2) {
             e.preventDefault();
             isDragging = true;
             startX = e.clientX;
@@ -1025,7 +948,7 @@ function setupDragAndDrop(squareElement, isCorrect) {
             initialY = rect.top - containerRect.top;
             squareElement.style.zIndex = '1000';
             squareElement.style.cursor = 'grabbing';
-            // Remove transition during drag for immediate response
+
             squareElement.style.transition = 'none';
         }
     };
@@ -1035,8 +958,7 @@ function setupDragAndDrop(squareElement, isCorrect) {
             e.preventDefault();
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
-            const containerRect = squaresContainer.getBoundingClientRect();
-            // Update position directly without throttling
+
             squareElement.style.left = (initialX + dx) + 'px';
             squareElement.style.top = (initialY + dy) + 'px';
         }
@@ -1045,12 +967,11 @@ function setupDragAndDrop(squareElement, isCorrect) {
     upHandler = (e) => {
         if (isDragging && squareElement) {
             isDragging = false;
-            // Restore transition after drag
+
             squareElement.style.transition = 'all 0.3s ease';
             squareElement.style.zIndex = '';
             squareElement.style.cursor = 'move';
 
-            // Check if dropped in drop zone
             if (dropZone) {
                 const dropRect = dropZone.getBoundingClientRect();
                 const squareRect = squareElement.getBoundingClientRect();
@@ -1059,13 +980,13 @@ function setupDragAndDrop(squareElement, isCorrect) {
 
                 if (squareCenterX >= dropRect.left && squareCenterX <= dropRect.right &&
                     squareCenterY >= dropRect.top && squareCenterY <= dropRect.bottom) {
-                    // Dropped in zone
+
                     if (isCorrect) {
                         handleCorrectAnswer();
                     } else {
                         handleWrongAnswer(squareElement);
                     }
-                    // Animate disappearance
+
                     squareElement.style.opacity = '0';
                     squareElement.style.transform = 'scale(0)';
                     setTimeout(() => {
@@ -1082,7 +1003,6 @@ function setupDragAndDrop(squareElement, isCorrect) {
     document.addEventListener('mousemove', moveHandler);
     document.addEventListener('mouseup', upHandler);
 
-    // Prevent context menu on right click
     squareElement.addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
@@ -1092,11 +1012,11 @@ function toggleChaoticComplication() {
     gameState.chaoticComplicationMode = chaoticComplicationCheckbox.checked;
 
     if (gameState.chaoticComplicationMode) {
-        // Immediately shuffle cards when checkbox is checked
+
         if (gameState.currentLevelData.mode === 2) {
             positionSquaresRandomly();
         }
-        // Start repositioning every 10 seconds
+
         gameState.chaoticRepositionTimer = setInterval(() => {
             if (gameState.currentLevelData.mode === 2) {
                 positionSquaresRandomly();
@@ -1110,11 +1030,10 @@ function toggleChaoticComplication() {
     }
 }
 
-// Mode 3: Rotation
 let rotationAnimationId = null;
 
 function startRotationAnimation() {
-    // Stop any existing animation
+
     if (rotationAnimationId) {
         cancelAnimationFrame(rotationAnimationId);
     }
@@ -1125,7 +1044,7 @@ function startRotationAnimation() {
         if (!square.dataset.rotation) {
             square.dataset.rotation = '0';
         }
-        // Assign random rotation direction (1 for clockwise, -1 for counterclockwise)
+
         if (!square.dataset.rotationDirection) {
             square.dataset.rotationDirection = Math.random() < 0.5 ? '1' : '-1';
         }
@@ -1139,19 +1058,9 @@ function startRotationAnimation() {
                 const direction = parseFloat(square.dataset.rotationDirection || 1);
                 const newRotation = currentRotation + (gameState.rotationSpeed * direction);
                 square.dataset.rotation = newRotation.toString();
-                // Preserve existing transform if it has translate (for flying mode)
-                const existingTransform = square.style.transform;
-                if (existingTransform && existingTransform.includes('translate')) {
-                    // Extract translate part
-                    const translateMatch = existingTransform.match(/translate[^)]+/);
-                    if (translateMatch) {
-                        square.style.transform = `${translateMatch[0]}) rotate(${newRotation}deg)`;
-                    } else {
-                        square.style.transform = `rotate(${newRotation}deg)`;
-                    }
-                } else {
-                    square.style.transform = `rotate(${newRotation}deg)`;
-                }
+
+                square.style.transform = `rotate(${newRotation}deg)`;
+
             });
             rotationAnimationId = requestAnimationFrame(animate);
         }
@@ -1167,9 +1076,8 @@ function updateRotationSpeed() {
 
 let flyingAnimationId = null;
 
-// Mode 3: Flying
 function startFlyingAnimation() {
-    // Stop any existing animation
+
     if (flyingAnimationId) {
         cancelAnimationFrame(flyingAnimationId);
     }
@@ -1178,7 +1086,6 @@ function startFlyingAnimation() {
     const container = squaresContainer;
     if (!container) return;
 
-    // Initialize velocities and positions
     squares.forEach((square, index) => {
         if (!gameState.squareVelocities[index]) {
             gameState.squareVelocities[index] = {
@@ -1186,7 +1093,7 @@ function startFlyingAnimation() {
                 vy: (Math.random() - 0.5) * 3
             };
         }
-        // Make sure squares are positioned absolutely
+
         square.style.position = 'absolute';
         if (!square.style.left) {
             const rect = square.getBoundingClientRect();
@@ -1209,13 +1116,11 @@ function startFlyingAnimation() {
 
                 let x = parseFloat(square.style.left) || 0;
                 let y = parseFloat(square.style.top) || 0;
-                const size = 100; // Square size
+                const size = 100;
 
-                // Update position
                 x += velocity.vx;
                 y += velocity.vy;
 
-                // Bounce off edges
                 if (x <= 0) {
                     velocity.vx = Math.abs(velocity.vx);
                     x = 0;
@@ -1249,7 +1154,6 @@ function toggleFlyingMode() {
     }
 }
 
-// Mode 3: Display filters
 function updateDisplayMode() {
     if (displayModeSelect) {
         gameState.displayMode = displayModeSelect.value;
@@ -1278,7 +1182,6 @@ function applyDisplayMode() {
     }
 }
 
-// Mode 3: Keyboard selection
 function highlightSelectedSquare() {
     const squares = document.querySelectorAll('#squares-container .square');
     squares.forEach((square, index) => {
@@ -1295,11 +1198,11 @@ let ctrlKeyPressed = false;
 document.addEventListener('keydown', (e) => {
     if (!gameState.gameStarted || isGameOver) return;
     if (gameState.currentLevelData && gameState.currentLevelData.mode === 3) {
-        // Handle Ctrl key to cycle through squares
+
         if (e.key === 'Control' || e.ctrlKey) {
-            // Only process if it's a new Ctrl press (not held)
+
             const now = Date.now();
-            if (!ctrlKeyPressed && now - lastCtrlPress > 50) { // Reduced debounce from 200ms to 50ms
+            if (!ctrlKeyPressed && now - lastCtrlPress > 50) {
                 e.preventDefault();
                 const squares = document.querySelectorAll('#squares-container .square');
                 if (squares.length > 0) {
@@ -1326,7 +1229,6 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
-// Глобальные функции
 window.showExitModal = showExitModal;
 window.showRestartModal = showRestartModal;
 window.restartGame = restartGame;
