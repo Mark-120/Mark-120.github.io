@@ -1,14 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Обновляем информацию о пользователе
+    
     updateUserInfo();
 
-    // Проверяем, есть ли сохраненное имя
     if (!localStorage.getItem('squareGameUsername')) {
         showNameModal();
     }
 
-
-    // Обработчик кнопки "Пройти игру"
     document.getElementById('play-btn').addEventListener('click', function () {
         const username = getUsername();
         if (!username || username.trim() === '') {
@@ -19,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Функции для работы с пользователем
 function getUsername() {
     return localStorage.getItem('squareGameUsername') || '';
 }
@@ -69,7 +65,6 @@ function saveNewUsername() {
         setUsername(newName);
         hideNameModal();
 
-        // Если это первое введение имени, показываем приветствие
         if (!localStorage.getItem('squareGameFirstLogin')) {
             alert(`Добро пожаловать, ${newName}! Удачи в игре!`);
             localStorage.setItem('squareGameFirstLogin', 'true');
@@ -85,7 +80,6 @@ function formatTime(milliseconds) {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-// Глобальные функции
 window.showNameModal = showNameModal;
 window.hideNameModal = hideNameModal;
 window.saveNewUsername = saveNewUsername;

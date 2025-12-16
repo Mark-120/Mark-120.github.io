@@ -328,9 +328,8 @@ function generateLevel() {
 
         document.addEventListener('contextmenu', preventContextMenuMode2, true);
 
-        // setTimeout(() => {
         positionSquaresRandomly();
-        // }, 100);
+        
     } else if (level.mode === 3) {
 
         document.removeEventListener('contextmenu', preventContextMenuMode2, true);
