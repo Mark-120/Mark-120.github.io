@@ -7,29 +7,6 @@
     <title>Поиск квадрата - Игра</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="square_game.css">
-    <style>
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .username {
-            font-weight: bold;
-            color: #7c3aed;
-        }
-    </style>
 </head>
 
 <body>
@@ -41,7 +18,7 @@
                 </div>
                 <nav class="main-nav">
                     <a href="../main_page/index.html" class="nav-link">Меню игры</a>
-                    <a href="../rating.html" class="nav-link">Рейтинг игроков</a>
+                    <a href="../rating/rating.html" class="nav-link">Рейтинг игроков</a>
                 </nav>
                 <div class="user-info" id="user-info"></div>
             </div>
@@ -99,8 +76,13 @@
                     </button>
                     <div id="sample-area-text" class="sample-area-text"></div>
                     <div id="drop-zone" class="drop-zone" style="display: none;"></div>
+                    <button class="rotate-btn" onclick="openSecondMode()">
+                        Режим №2
+                    </button>
+                    <button class="rotate-btn" onclick="openThirdMode()">
+                        Режим №3
+                    </button>
 
-                    <!-- Mode 2 Controls -->
                     <div class="mode-2-controls" style="display: none;">
                         <label class="complication-checkbox">
                             <input type="checkbox" id="chaotic-complication-checkbox">
@@ -110,10 +92,10 @@
                         </p>
                     </div>
 
-                    <!-- Mode 3 Controls -->
                     <div class="mode-3-controls" style="display: none;">
                         <div class="dizziness-warning">
-                            <strong>Предупреждение:</strong> Если этот режим вызывает у вас головокружение, измените скорость вращения квадратов до нуля
+                            <strong>Предупреждение:</strong> Если этот режим вызывает у вас головокружение, измените
+                            скорость вращения квадратов до нуля
                         </div>
                         <div class="rotation-speed-control">
                             <label for="rotation-speed-slider">Скорость вращения:</label>
@@ -137,7 +119,6 @@
                 </div>
             </div>
 
-            <!-- Floating Level Info Panel -->
             <div id="level-info-panel" class="level-info-panel">
                 <button id="level-info-toggle" class="level-info-toggle">
                     <span class="arrow">→</span>
@@ -181,7 +162,7 @@
                 <button class="modal-btn primary" onclick="window.location.href='../main_page/index.html'">
                     В меню
                 </button>
-                <button class="modal-btn" onclick="window.location.href='../rating.html'">
+                <button class="modal-btn" onclick="window.location.href='../rating/rating.html'">
                     Рейтинг игроков
                 </button>
             </div>

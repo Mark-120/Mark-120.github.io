@@ -97,6 +97,7 @@
         opacity: 1;
         transform: translateY(0) translateX(-50%);
     }
+
     100% {
         opacity: 0;
         transform: translateY(-30px) translateX(-50%);
@@ -154,7 +155,7 @@
 
 .square.selected {
     border-color: #7c3aed;
-    border-width: 3px;
+    border-width: 6px;
     box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
 }
 
@@ -303,7 +304,6 @@
     font-size: 16px;
 }
 
-/* Floating Level Info Panel */
 .level-info-panel {
     position: fixed;
     right: 0;
@@ -364,7 +364,6 @@
     flex-direction: column;
 }
 
-/* Сообщения */
 .error-message.success {
     background: #d1fae5;
     color: #065f46;
@@ -377,7 +376,6 @@
     border: 1px solid #fecaca;
 }
 
-/* Модальные окна - добавим стили для новых */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -424,7 +422,6 @@
     color: #7c3aed;
 }
 
-/* Стили для правильного квадрата при проигрыше */
 .correct-hint {
     text-align: center;
     margin: 15px 0;
@@ -434,7 +431,6 @@
     border: 1px solid #bbf7d0;
 }
 
-/* Индикатор номера правильного квадрата */
 .correct-number {
     position: absolute;
     top: -10px;
@@ -453,7 +449,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Mode 2: Drop Zone */
 .drop-zone {
     width: 200px;
     height: 200px;
@@ -479,7 +474,6 @@
     min-height: 40px;
 }
 
-/* Mode 2 & 3 Controls */
 .mode-2-controls,
 .mode-3-controls {
     margin-top: 20px;
@@ -550,4 +544,26 @@
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 14px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.username {
+    font-weight: bold;
+    color: #7c3aed;
 }

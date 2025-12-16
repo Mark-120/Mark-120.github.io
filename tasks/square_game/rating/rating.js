@@ -1,10 +1,8 @@
-// Инициализация
 document.addEventListener('DOMContentLoaded', function () {
     updateUserInfo();
     loadRating();
 });
 
-// Общие функции для работы с пользователем
 function getUsername() {
     return localStorage.getItem('squareGameUsername') || 'Игрок';
 }
@@ -19,7 +17,6 @@ function updateUserInfo() {
     }
 }
 
-// Функции для рейтинга
 function loadRating() {
     const rating = JSON.parse(localStorage.getItem('squareGameRating') || '[]');
     const tbody = document.getElementById('rating-body');
@@ -33,7 +30,6 @@ function loadRating() {
 
     noData.style.display = 'none';
 
-    // Сортировка по баллам (по убыванию)
     rating.sort((a, b) => b.score - a.score);
 
     let html = '';

@@ -328,16 +328,16 @@ function generateLevel() {
 
         document.addEventListener('contextmenu', preventContextMenuMode2, true);
 
-        setTimeout(() => {
-            positionSquaresRandomly();
-        }, 100);
+        // setTimeout(() => {
+        positionSquaresRandomly();
+        // }, 100);
     } else if (level.mode === 3) {
 
         document.removeEventListener('contextmenu', preventContextMenuMode2, true);
+        positionSquaresRandomly();
+        startRotationAnimation();
 
         setTimeout(() => {
-            positionSquaresRandomly();
-            startRotationAnimation();
             if (gameState.flyingMode) {
                 setTimeout(() => startFlyingAnimation(), 100);
             }
@@ -1229,9 +1229,19 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
+function openSecondMode() {
+    while (gameState.currentLevel != 4 && gameState.currentLevel < 10) handleCorrectAnswer();
+}
+
+function openThirdMode() {
+    while (gameState.currentLevel != 7 && gameState.currentLevel < 10) handleCorrectAnswer();
+}
+
 window.showExitModal = showExitModal;
 window.showRestartModal = showRestartModal;
 window.restartGame = restartGame;
 window.rotateSample = rotateSample;
 window.hideModal = hideModal;
 window.goBack = goBack;
+window.openSecondMode = openSecondMode;
+window.openThirdMode = openThirdMode;
