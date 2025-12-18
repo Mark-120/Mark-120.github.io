@@ -13,6 +13,7 @@ function updateUserInfo() {
         const username = getUsername();
         userInfo.innerHTML = `
             <span class="username">${username}</span>
+            ${username ? '<button class="change-name-btn" onclick="showNameModal()">Сменить имя</button>' : ''}
         `;
     }
 }
@@ -65,4 +66,48 @@ function clearRating() {
     }
 }
 
+function showNameModal() {
+    const modal = document.getElementById('name-modal');
+    const overlay = document.getElementById('name-modal-overlay');
+    const input = document.getElementById('new-username');
+
+    if (!modal || !overlay || !input) return;
+
+    input.value = getUsername();
+    input.focus();
+
+    modal.style.display = 'block';
+    overlay.style.display = 'block';
+
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            saveNewUsername();
+        }
+    });
+}
+
+function hideNameModal() {
+    const modal = document.getElementById('name-modal');
+    const overlay = document.getElementById('name-modal-overlay');
+    if (modal) modal.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+}
+
+function saveNewUsername() {
+    const input = document.getElementById('new-username');
+    if (!input) return;
+
+    const newName = input.value.trim();
+    if (newName && newName.length > 0) {
+        localStorage.setItem('squareGameUsername', newName);
+        updateUserInfo();
+        hideNameModal();
+    } else {
+        alert('Пожалуйста, введите имя');
+    }
+}
+
 window.clearRating = clearRating;
+window.showNameModal = showNameModal;
+window.hideNameModal = hideNameModal;
+window.saveNewUsername = saveNewUsername;

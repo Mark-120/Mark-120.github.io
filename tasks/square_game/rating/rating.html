@@ -60,6 +60,20 @@
         </div>
     </main>
 
+    <div class="modal-overlay" id="name-modal-overlay"></div>
+    <div class="modal" id="name-modal">
+        <div class="modal-header">
+            <h2>Введите имя пользователя</h2>
+        </div>
+        <div class="modal-content">
+            <p>Пожалуйста, введите ваше имя для участия в рейтинге:</p>
+            <input type="text" id="new-username" placeholder="Ваше имя" maxlength="20" class="name-input">
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="saveNewUsername()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <script src="rating.js"></script>
 </body>
 

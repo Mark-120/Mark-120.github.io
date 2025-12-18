@@ -149,6 +149,20 @@
     height: 100px;
 }
 
+.square.fade-out {
+    animation: squareFadeOut 1s ease forwards;
+}
+
+@keyframes squareFadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
 .square:hover {
     border-color: #7c3aed;
 }
@@ -191,7 +205,9 @@
     border-radius: 5px;
     text-align: center;
     margin-bottom: 10px;
-    display: none;
+    display: block;
+    transition: all 0.3s ease;
+    opacity: 0;
 }
 
 .modal-overlay {

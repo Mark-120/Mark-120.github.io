@@ -95,6 +95,7 @@ function getUserInfo() {
         const username = localStorage.getItem('squareGameUsername') || 'Игрок';
         userInfo.innerHTML = `
             <span class="username">${username}</span>
+            ${username ? '<button class="change-name-btn" onclick="showNameModal()">Сменить имя</button>' : ''}
         `;
     }
 }
@@ -329,7 +330,7 @@ function generateLevel() {
         document.addEventListener('contextmenu', preventContextMenuMode2, true);
 
         positionSquaresRandomly();
-        
+
     } else if (level.mode === 3) {
 
         document.removeEventListener('contextmenu', preventContextMenuMode2, true);
@@ -561,10 +562,10 @@ function rotateSample() {
 function showMessage(text, type) {
     errorMessageElement.textContent = text;
     errorMessageElement.className = `error-message ${type}`;
-    errorMessageElement.style.display = 'block';
+    errorMessageElement.style.opacity = '100%';
 
     setTimeout(() => {
-        errorMessageElement.style.display = 'none';
+        errorMessageElement.style.opacity = '0';
     }, 2000);
 }
 
@@ -967,7 +968,7 @@ function setupDragAndDrop(squareElement, isCorrect) {
         if (isDragging && squareElement) {
             isDragging = false;
 
-            squareElement.style.transition = 'all 0.3s ease';
+            squareElement.style.transition = 'all 1s ease';
             squareElement.style.zIndex = '';
             squareElement.style.cursor = 'move';
 
@@ -986,13 +987,12 @@ function setupDragAndDrop(squareElement, isCorrect) {
                         handleWrongAnswer(squareElement);
                     }
 
-                    squareElement.style.opacity = '0';
-                    squareElement.style.transform = 'scale(0)';
+                    squareElement.classList.add('fade-out');
                     setTimeout(() => {
                         if (squareElement && squareElement.parentNode) {
                             squareElement.remove();
                         }
-                    }, 300);
+                    }, 1000);
                 }
             }
         }
@@ -1236,6 +1236,49 @@ function openThirdMode() {
     while (gameState.currentLevel != 7 && gameState.currentLevel < 10) handleCorrectAnswer();
 }
 
+function showNameModal() {
+    const modal = document.getElementById('name-modal');
+    const overlay = document.getElementById('name-modal-overlay');
+    const input = document.getElementById('new-username');
+
+    if (!modal || !overlay || !input) return;
+
+    input.value = localStorage.getItem('squareGameUsername') || '';
+    input.focus();
+
+    modal.style.display = 'block';
+    overlay.style.display = 'block';
+
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            saveNewUsername();
+        }
+    });
+}
+
+function hideNameModal() {
+    const modal = document.getElementById('name-modal');
+    const overlay = document.getElementById('name-modal-overlay');
+    if (modal) modal.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+}
+
+function saveNewUsername() {
+    const input = document.getElementById('new-username');
+    if (!input) return;
+
+    const newName = input.value.trim();
+    if (newName && newName.length > 0) {
+        localStorage.setItem('squareGameUsername', newName);
+        getUserInfo();
+        hideNameModal();
+
+        restartGame();
+    } else {
+        alert('Пожалуйста, введите имя');
+    }
+}
+
 window.showExitModal = showExitModal;
 window.showRestartModal = showRestartModal;
 window.restartGame = restartGame;
@@ -1244,3 +1287,6 @@ window.hideModal = hideModal;
 window.goBack = goBack;
 window.openSecondMode = openSecondMode;
 window.openThirdMode = openThirdMode;
+window.showNameModal = showNameModal;
+window.hideNameModal = hideNameModal;
+window.saveNewUsername = saveNewUsername;
